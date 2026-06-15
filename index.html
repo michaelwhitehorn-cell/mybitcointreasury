@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mybitcointreasury — Coming Soon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Instrument+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html { height: 100%; }
+body { min-height: 100%; }
+
+body {
+  background: #0A0A0A;
+  color: #F0EDE8;
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* grain */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ambient glow */
+body::after {
+  content: '';
+  position: fixed;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 60vh;
+  background: radial-gradient(ellipse, rgba(247,147,26,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* grid */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.wrap {
+  position: relative;
+  z-index: 2;
+  max-width: 580px;
+  width: 100%;
+  text-align: center;
+}
+
+/* wordmark */
+.wordmark {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px, 5vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 3rem;
+  color: #F0EDE8;
+}
+.wordmark span { color: #F7931A; }
+
+/* kicker */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #F7931A;
+  border: 1px solid rgba(247,147,26,0.3);
+  padding: 6px 14px;
+  border-radius: 2px;
+  background: rgba(247,147,26,0.06);
+  margin-bottom: 2rem;
+}
+
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #F7931A;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.4;transform:scale(0.8)}
+}
+
+/* headline */
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1.08;
+  margin-bottom: 1.25rem;
+  color: #F0EDE8;
+}
+h1 em {
+  font-style: italic;
+  color: #F7931A;
+}
+
+/* sub */
+.sub {
+  font-size: 15px;
+  color: #9A9490;
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* divider */
+.divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(247,147,26,0.4);
+  margin: 0 auto 2.5rem;
+}
+
+/* email form */
+.form-wrap {
+  background: #111111;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5C5854;
+  margin-bottom: 0.75rem;
+  display: block;
+  text-align: left;
+}
+
+.form-row {
+  display: flex;
+  gap: 8px;
+}
+
+.form-input {
+  flex: 1;
+  background: #161616;
+  border: 1px solid rgba(255,255,255,0.07);
+  color: #F0EDE8;
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input::placeholder { color: #3C3A38; }
+.form-input:focus { border-color: rgba(247,147,26,0.4); }
+
+.form-btn {
+  background: #F7931A;
+  color: #000;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.form-btn:hover { opacity: 0.88; }
+
+.form-note {
+  font-size: 11px;
+  color: #5C5854;
+  margin-top: 0.75rem;
+  text-align: left;
+  line-height: 1.5;
+}
+
+/* success */
+.success-msg {
+  display: none;
+  padding: 1rem;
+  text-align: center;
+}
+.success-msg .icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.success-msg .title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #F0EDE8;
+}
+.success-msg .body {
+  font-size: 13px;
+  color: #9A9490;
+  line-height: 1.6;
+}
+
+/* three pillars */
+.pillars {
+  display: flex;
+  gap: 1px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.pillar {
+  flex: 1;
+  background: #111111;
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+
+.pillar-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #F7931A;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.pillar-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #F0EDE8;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+
+.pillar-desc {
+  font-size: 11px;
+  color: #5C5854;
+  line-height: 1.4;
+}
+
+/* quote */
+.quote-block {
+  border-left: 2px solid rgba(247,147,26,0.3);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 2.5rem;
+  text-align: left;
+  background: rgba(247,147,26,0.03);
+  border-radius: 0 4px 4px 0;
+}
+.quote-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #9A9490;
+  line-height: 1.65;
+  margin-bottom: 4px;
+}
+.quote-attr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #5C5854;
+  letter-spacing: 0.06em;
+}
+
+/* footer */
+.footer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #3C3A38;
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+}
+.footer a { color: #3C3A38; text-decoration: none; }
+.footer a:hover { color: #5C5854; }
+
+/* Beehiiv embed theming */
+.beehiiv-subscribe-form {
+  background: transparent !important;
+}
+iframe[src*="beehiiv"] {
+  border-radius: 4px;
+  width: 100% !important;
+}
+
+/* responsive */
+@media (max-width: 480px) {
+  .form-row { flex-direction: column; }
+  .pillars { flex-direction: column; gap: 0; }
+  .pillar { border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .pillar:last-child { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="wrap">
+
+  <div class="wordmark">my<span>bitcoin</span>treasury</div>
+
+  <div class="kicker">
+    <span class="live-dot"></span>
+    Launching soon · Towards 2030
+  </div>
+
+  <h1>
+    The <em>Sovereign</em><br>
+    <em>Wealth Stack.</em><br>
+    Documented.
+  </h1>
+
+  <p class="sub">
+    One operator. One Bitcoin treasury. Every decision recorded in full, with complete reasoning, from January 2025 through to 2030. The institutional treasury playbook made transparent for individuals.
+  </p>
+
+  <div class="divider"></div>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-num">01</div>
+      <div class="pillar-title">Acquire</div>
+      <div class="pillar-desc">Disciplined DCA guided by the power law and halving cycle</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">02</div>
+      <div class="pillar-title">Secure</div>
+      <div class="pillar-desc">Progressive self-custody with a succession plan in place</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">03</div>
+      <div class="pillar-title">Build</div>
+      <div class="pillar-desc">Treasury actions that grow the stack without selling it</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <div class="quote-text">"I exited Bitcoin in early 2015 near the cycle bottom and watched it recover to $20,000 from the sidelines. This framework is built on that lesson."</div>
+    <div class="quote-attr">— Michael Whitehorn · Operator · mybitcointreasury.finance</div>
+  </div>
+
+  <div class="form-wrap">
+    <div class="form-label" style="margin-bottom:0.5rem;">Get the operators manual on launch day — free</div>
+    <div class="form-note" style="margin-bottom:1.25rem;">The complete MyBitcoinTreasury thesis: 17 months of documented decision history, the power law framework, and the Towards 2030 roadmap. Delivered free on launch day.</div>
+    <div class="form-row">
+      <input type="email" id="cs-email" class="form-input" placeholder="your@email.com" autocomplete="email">
+      <button class="form-btn" onclick="handleSignup()">Notify me</button>
+    </div>
+    <div class="form-note" style="margin-top:0.75rem;" id="cs-note">We will email you the operators manual on launch day. No spam. Unsubscribe any time.</div>
+  </div>
+  <div class="success-msg" id="successMsg">
+    <div class="icon">₿</div>
+    <div class="title">You are on the list.</div>
+    <div class="body">The operators manual lands in your inbox on launch day. Stack building in the meantime.</div>
+  </div>
+
+  <div class="footer">
+    <div>mybitcointreasury.finance · Perth, Western Australia</div>
+    <div style="margin-top:4px;">Not financial advice · Educational purposes only</div>
+  </div>
+
+</div>
+
+<script>
+function handleSignup() {
+  const email = document.getElementById('cs-email').value.trim();
+  if(!email || !email.includes('@') || !email.includes('.')) {
+    const input = document.getElementById('cs-email');
+    input.style.borderColor = '#EF4444';
+    input.focus();
+    setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.07)'; }, 2000);
+    return;
+  }
+  // Post to Beehiiv subscribe endpoint
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://mybitcointreasury.beehiiv.com/subscribe';
+  form.target = '_blank';
+  form.style.display = 'none';
+  const emailField = document.createElement('input');
+  emailField.name = 'email';
+  emailField.value = email;
+  form.appendChild(emailField);
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+  // Show success state
+  document.getElementById('formWrap') && (document.getElementById('formWrap').style.display = 'none');
+  document.querySelector('.form-wrap').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.getElementById('cs-email');
+  if(input) {
+    input.addEventListener('keydown', function(e) {
+      if(e.key === 'Enter') handleSignup();
+    });
+  }
+});
+</script>
+</body>
+</html>
