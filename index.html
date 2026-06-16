@@ -406,21 +406,10 @@ function handleSignup() {
     setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.07)'; }, 2000);
     return;
   }
-  // Post to Beehiiv subscribe endpoint
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = 'https://mybitcointreasury.beehiiv.com/subscribe';
-  form.target = '_blank';
-  form.style.display = 'none';
-  const emailField = document.createElement('input');
-  emailField.name = 'email';
-  emailField.value = email;
-  form.appendChild(emailField);
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-  // Show success state
-  document.getElementById('formWrap') && (document.getElementById('formWrap').style.display = 'none');
+  // Send to Beehiiv via magic link with email substituted in
+  const beehiivUrl = 'https://magic.beehiiv.com/v1/46ac1610-395c-4416-b3af-4730b85f5604?email=' + encodeURIComponent(email);
+  window.open(beehiivUrl, '_blank');
+  // Show success state on this page
   document.querySelector('.form-wrap').style.display = 'none';
   document.getElementById('successMsg').style.display = 'block';
 }
