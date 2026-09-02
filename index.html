@@ -393,6 +393,17 @@ nav {
 }
 .nav-links a:hover { color: var(--text); }
 
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
 .nav-cta {
   background: var(--btc);
   color: #000 !important;
@@ -1539,7 +1550,41 @@ section.full { max-width: none; padding: 0; }
   .referral-grid { grid-template-columns: repeat(2, 1fr); }
   .kpi-row { grid-template-columns: repeat(2, 1fr) !important; }
   .signal-row { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    background: rgba(10,10,10,0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.5rem 1.5rem 1.5rem;
+  }
+  .nav-links.mobile-open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links li a {
+    display: block;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .nav-links li a.nav-cta,
+  .nav-links li a.nav-cta-secondary {
+    text-align: center;
+    border-bottom: none;
+    margin-top: 0.5rem;
+    margin-bottom: 0.6rem;
+    padding: 12px;
+  }
   .log-header, .log-entry { grid-template-columns: 90px 1fr !important; }
   .log-header-cell:nth-child(2), .log-cell:nth-child(2) { display: none; }
   .log-header-cell:last-child, .log-cell:last-child { display: none; }
@@ -1551,7 +1596,10 @@ section.full { max-width: none; padding: 0; }
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">my<span>bitcoin</span>treasury</a>
-  <ul class="nav-links">
+  <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">
+    <i class="ti ti-menu-2" id="navMenuIcon"></i>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#operation">The operation</a></li>
     <li><a href="#dashboard">Dashboard</a></li>
     <li><a href="#log">Decision log</a></li>
@@ -2450,6 +2498,21 @@ function closeSubModal(e) {
     document.body.style.overflow = '';
   }
 }
+
+function toggleMobileNav() {
+  const links = document.getElementById('navLinks');
+  const icon = document.getElementById('navMenuIcon');
+  const isOpen = links.classList.toggle('mobile-open');
+  icon.className = isOpen ? 'ti ti-x' : 'ti ti-menu-2';
+}
+
+// Close the mobile menu automatically once a link inside it is clicked
+document.getElementById('navLinks').addEventListener('click', function(e) {
+  if (e.target.tagName === 'A') {
+    this.classList.remove('mobile-open');
+    document.getElementById('navMenuIcon').className = 'ti ti-menu-2';
+  }
+});
 
 function handleSubSignup() {
   const name = document.getElementById('sub-name').value;
