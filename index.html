@@ -736,36 +736,24 @@ section.full { max-width: none; padding: 0; }
   display: flex;
   flex-direction: column;
   gap: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.founder-timeline-wrap {
-  position: relative;
-  align-self: stretch;
-  display: flex;
-  align-items: center;
 }
 
 .founder-timeline-photo {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+  height: 200px;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
   background-image: url('founder-mining.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  pointer-events: none;
 }
 
 .founder-milestone {
   display: flex;
   gap: 1.5rem;
-  padding: 1.25rem 1rem;
-  margin: 0 -1rem;
+  padding: 1.25rem 0;
   border-bottom: 1px solid var(--border);
   position: relative;
-  background: rgba(17,17,17,0.5);
 }
 .founder-milestone:last-child { border-bottom: none; }
 
@@ -1695,8 +1683,8 @@ section.full { max-width: none; padding: 0; }
       </p>
       <div class="founder-sig">Michael Whitehorn, mybitcointreasury.finance</div>
     </div>
-    <div class="founder-timeline-wrap">
-      <div class="founder-timeline">
+    <div class="founder-timeline">
+      <div class="founder-timeline-photo" role="img" aria-label="The founder standing among Bitcoin ASIC mining infrastructure, 2014"></div>
       <div class="founder-milestone">
         <div class="milestone-year">Late 2013</div>
         <div class="milestone-text">
@@ -1774,8 +1762,6 @@ section.full { max-width: none; padding: 0; }
           Next halving Apr 2028. Projected cycle peak 2029–2030. Every decision between now and then: documented.
         </div>
       </div>
-      </div>
-      <div class="founder-timeline-photo" role="img" aria-label="The founder standing among Bitcoin ASIC mining infrastructure, 2014"></div>
     </div>
   </div>
 </section>
