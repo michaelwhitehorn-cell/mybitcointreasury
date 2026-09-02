@@ -3,30 +3,340 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>mybitcointreasury — Coming Soon</title>
+<title>mybitcointreasury, The Sovereign Wealth Stack · Towards 2030</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Instrument+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Instrument+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html { height: 100%; }
-body { min-height: 100%; }
-
-body {
-  background: #0A0A0A;
-  color: #F0EDE8;
-  font-family: 'Instrument Sans', system-ui, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+:root {
+  --btc: #F7931A;
+  --btc-dim: #C4701200;
+  --btc-glow: rgba(247,147,26,0.15);
+  --btc-line: rgba(247,147,26,0.3);
+  --dark: #0A0A0A;
+  --surface: #111111;
+  --surface2: #161616;
+  --surface3: #1C1C1C;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #F0EDE8;
+  --text2: #9A9490;
+  --text3: #827C76;
+  --green: #22C55E;
+  --red: #EF4444;
+  --blue: #60A5FA;
+  --purple: #A78BFA;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 }
 
-/* grain */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* HERO LOOP DIAGRAM */
+.hero-loop-diagram {
+  background: rgba(247,147,26,0.03);
+  border: 1px solid rgba(247,147,26,0.12);
+  border-radius: var(--radius-xl);
+  padding: 2rem 1.75rem;
+  backdrop-filter: blur(10px);
+}
+.hero-loop-nodes {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: center;
+}
+.hero-loop-node {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 2rem;
+  text-align: center;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.hero-loop-node.active {
+  border-color: var(--btc-line);
+  background: var(--btc-glow);
+}
+.hero-loop-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.hero-loop-connector {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0;
+}
+/* SUBSCRIPTION INLINE PROMPT */
+.sub-prompt {
+  background: var(--surface2);
+  border: 1px solid var(--btc-line);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.sub-prompt::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--btc), transparent);
+}
+.sub-prompt-left { flex: 1; min-width: 240px; }
+.sub-prompt-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--btc);
+  margin-bottom: 6px;
+}
+.sub-prompt-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+  line-height: 1.35;
+}
+.sub-prompt-desc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.sub-prompt-price {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 6px;
+}
+.sub-prompt-price strong { color: var(--btc); }
+.sub-prompt-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+/* NEWSLETTER SECTION */
+.newsletter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 2rem;
+}
+.newsletter-card {
+  background: var(--surface);
+  padding: 1.75rem 2rem;
+}
+.newsletter-issue-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--btc);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.newsletter-card-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.newsletter-card-body {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.newsletter-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+}
+.ntag-btc { background: rgba(247,147,26,0.12); color: var(--btc); }
+.ntag-macro { background: rgba(96,165,250,0.12); color: var(--blue); }
+.ntag-cycle { background: rgba(34,197,94,0.12); color: var(--green); }
+.ntag-ops { background: rgba(167,139,250,0.12); color: var(--purple); }
+
+.newsletter-preview {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  margin-top: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.newsletter-preview::before {
+  content: 'SAMPLE ISSUE';
+  position: absolute;
+  top: 12px; right: 16px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  background: var(--surface3);
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+.preview-header {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.preview-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.preview-section {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.preview-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.preview-section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--btc);
+  margin-bottom: 5px;
+}
+.preview-section-body {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.preview-section-body strong { color: var(--text); font-weight: 500; }
+.preview-blurred {
+  filter: blur(4px);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.preview-unlock {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* PHASE TIMELINE */
+.phase-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 2.5rem;
+}
+.phase-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 140px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  min-height: 56px;
+}
+.phase-row:last-child { border-bottom: none; }
+.phase-row.current { background: rgba(247,147,26,0.04); }
+.phase-row.done .phase-num { color: #22C55E; }
+.phase-row.current .phase-num { color: #F7931A; }
+.phase-num {
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text3);
+  min-height: 56px;
+}
+.phase-body {
+  padding: 0.875rem 1.25rem;
+  border-right: 1px solid var(--border);
+}
+.phase-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.phase-desc {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.phase-status {
+  padding: 0.875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.phase-badge {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.badge-done { background: rgba(34,197,94,0.1); color: #22C55E; }
+.badge-active { background: rgba(247,147,26,0.15); color: #F7931A; }
+.badge-next { background: rgba(255,255,255,0.05); color: var(--text3); }
+
+@media (max-width: 900px) {
+  .hero-loop-diagram { display: none; }
+}
+
+/* GRAIN OVERLAY */
 body::before {
   content: '';
   position: fixed;
@@ -34,394 +344,2092 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
   opacity: 0.025;
   pointer-events: none;
-  z-index: 10;
+  z-index: 1000;
 }
 
-/* ambient glow */
-body::after {
-  content: '';
+/* TYPOGRAPHY */
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; }
+.mono { font-family: var(--font-mono); }
+
+/* NAV */
+nav {
   position: fixed;
-  top: -20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80vw;
-  height: 60vh;
-  background: radial-gradient(ellipse, rgba(247,147,26,0.07) 0%, transparent 65%);
-  pointer-events: none;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,10,10,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* grid */
-.grid-bg {
-  position: fixed;
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--btc); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  background: var(--btc);
+  color: #000 !important;
+  padding: 8px 18px;
+  border-radius: 2px;
+  font-weight: 600 !important;
+  transition: opacity 0.2s !important;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* SECTIONS */
+section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
+section.full { max-width: none; padding: 0; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 2rem 4rem;
+  max-width: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(247,147,26,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(247,147,26,0.03) 0%, transparent 50%);
+}
+
+.hero-grid {
+  position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 0%, transparent 100%);
-  pointer-events: none;
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
 }
 
-.wrap {
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
   position: relative;
   z-index: 2;
-  max-width: 580px;
-  width: 100%;
-  text-align: center;
 }
 
-/* wordmark */
-.wordmark {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(26px, 5vw, 34px);
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  margin-bottom: 3rem;
-  color: #F0EDE8;
-}
-.wordmark span { color: #F7931A; }
-
-/* kicker */
-.kicker {
+.hero-kicker {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #F7931A;
-  border: 1px solid rgba(247,147,26,0.3);
+  color: var(--btc);
+  border: 1px solid var(--btc-line);
   padding: 6px 14px;
   border-radius: 2px;
-  background: rgba(247,147,26,0.06);
   margin-bottom: 2rem;
+  background: var(--btc-glow);
 }
 
 .live-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: #F7931A;
+  background: var(--btc);
   animation: pulse 2s infinite;
 }
+
 @keyframes pulse {
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:0.4;transform:scale(0.8)}
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
 }
 
-/* headline */
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2.4rem, 7vw, 4rem);
+.hero h1 {
+  font-size: clamp(3rem, 6vw, 5.5rem);
   font-weight: 700;
   letter-spacing: -2px;
-  line-height: 1.08;
-  margin-bottom: 1.25rem;
-  color: #F0EDE8;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  color: var(--text);
 }
-h1 em {
+
+.hero h1 em {
   font-style: italic;
-  color: #F7931A;
+  color: var(--btc);
 }
 
-/* sub */
-.sub {
-  font-size: 15px;
-  color: #9A9490;
-  line-height: 1.75;
+.hero-sub {
+  font-size: 18px;
+  color: var(--text2);
+  line-height: 1.7;
+  max-width: 600px;
+  margin-bottom: 3rem;
   font-weight: 300;
-  margin-bottom: 2.5rem;
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-/* divider */
-.divider {
-  width: 40px;
-  height: 1px;
-  background: rgba(247,147,26,0.4);
-  margin: 0 auto 2.5rem;
-}
-
-/* email form */
-.form-wrap {
-  background: #111111;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 8px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.form-label {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #827C76;
-  margin-bottom: 0.75rem;
-  display: block;
-  text-align: left;
-}
-
-.form-row {
+.hero-ctas {
   display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4rem;
+}
+
+.btn-primary {
+  background: var(--btc);
+  color: #000;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 2px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
 }
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
-.form-input {
-  flex: 1;
-  background: #161616;
-  border: 1px solid rgba(255,255,255,0.07);
-  color: #F0EDE8;
-  padding: 12px 14px;
-  border-radius: 4px;
-  font-family: 'Instrument Sans', sans-serif;
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  padding: 14px 28px;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  font-family: var(--font-body);
   font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.form-input::placeholder { color: #3C3A38; }
-.form-input:focus { border-color: rgba(247,147,26,0.4); }
-
-.form-btn {
-  background: #F7931A;
-  color: #000;
-  padding: 12px 22px;
-  border: none;
-  border-radius: 4px;
-  font-family: 'Instrument Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.2s;
-  white-space: nowrap;
-  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
-.form-btn:hover { opacity: 0.88; }
+.btn-secondary:hover { border-color: var(--btc-line); color: var(--btc); }
 
-.form-note {
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 760px;
+}
+
+.hero-stat {
+  background: var(--surface);
+  padding: 20px 24px;
+}
+.hero-stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.hero-stat-value {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+}
+.hero-stat-value.btc { color: var(--btc); }
+.hero-stat-value.green { color: var(--green); }
+.hero-stat-sub {
   font-size: 11px;
-  color: #827C76;
+  color: var(--text3);
+  margin-top: 3px;
+  font-family: var(--font-mono);
+}
+
+/* DIVIDER */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* LABELS */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--btc);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--btc);
+}
+
+/* FOUNDER SECTION */
+.founder-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.founder-quote {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--text);
+  margin-bottom: 2rem;
+  position: relative;
+  padding-left: 2rem;
+}
+.founder-quote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: var(--btc);
+}
+
+.founder-body {
+  color: var(--text2);
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.founder-sig {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--btc);
+}
+
+.founder-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.founder-milestone {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.founder-milestone:last-child { border-bottom: none; }
+
+.milestone-year {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--btc);
+  font-weight: 500;
+  width: 60px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.milestone-text {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.milestone-text strong {
+  color: var(--text);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* INFLECTION SECTION */
+.inflection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 2.5rem;
+}
+
+.inflection-card {
+  background: var(--surface);
+  padding: 2rem;
+}
+.inflection-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--btc);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+.inflection-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+.inflection-body {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+/* DASHBOARD SECTION */
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--green);
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.2);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  overflow: hidden;
+  margin-bottom: 1px;
+}
+
+.kpi {
+  background: var(--surface);
+  padding: 18px 20px;
+}
+.kpi-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.kpi-value {
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text);
+}
+.kpi-value.btc { color: var(--btc); }
+.kpi-value.green { color: var(--green); }
+.kpi-value.red { color: var(--red); }
+.kpi-sub {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+  margin-top: 3px;
+}
+
+.chart-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1px;
+}
+
+.chart-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.25rem;
+}
+.chart-tab {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text3);
+  background: none;
+  border: 1px solid transparent;
+  padding: 5px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+.chart-tab:hover { color: var(--text2); border-color: var(--border); }
+.chart-tab.active {
+  color: var(--btc);
+  border-color: var(--btc-line);
+  background: var(--btc-glow);
+}
+
+.chart-wrap { position: relative; height: 280px; }
+
+.chart-legend {
+  display: flex;
+  gap: 1.5rem;
   margin-top: 0.75rem;
-  text-align: left;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-line {
+  width: 16px; height: 2px;
+  flex-shrink: 0;
+}
+
+/* LIVE MARKER */
+.live-marker-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--btc);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* SIGNAL ROW */
+.signal-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 1px;
+}
+
+.signal-card {
+  background: var(--surface2);
+  padding: 1.25rem 1.5rem;
+}
+.signal-title {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.signal-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--btc);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.signal-desc {
+  font-size: 12px;
+  color: var(--text2);
   line-height: 1.5;
 }
 
-/* success */
-.success-msg {
-  display: none;
-  padding: 1rem;
-  text-align: center;
+/* DECISION LOG */
+.log-header {
+  display: grid;
+  grid-template-columns: 100px 90px 1fr 100px;
+  gap: 0;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 10px 0;
+  overflow: hidden;
 }
-.success-msg .icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.log-header-cell {
+  padding: 0 16px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  border-right: 1px solid var(--border);
 }
-.success-msg .title {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px;
+.log-header-cell:last-child { border-right: none; }
+
+.log-entries {
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: hidden;
+}
+
+.log-entry {
+  display: grid;
+  grid-template-columns: 100px 90px 1fr 100px;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.log-entry:last-child { border-bottom: none; }
+.log-entry:hover { background: rgba(255,255,255,0.02); }
+.log-entry.live-entry { border-left: 2px solid var(--btc); }
+
+.log-cell {
+  padding: 14px 16px;
+  border-right: 1px solid var(--border);
+  font-size: 12px;
+}
+.log-cell:last-child { border-right: none; }
+
+.log-date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+.log-price {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+.log-tag {
+  display: inline-block;
+  font-size: 9px;
   font-weight: 600;
-  margin-bottom: 0.25rem;
-  color: #F0EDE8;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+  margin-bottom: 4px;
 }
-.success-msg .body {
+.tag-dca { background: rgba(247,147,26,0.15); color: var(--btc); }
+.tag-custody { background: rgba(167,139,250,0.15); color: var(--purple); }
+.tag-collateral { background: rgba(96,165,250,0.15); color: var(--blue); }
+.tag-milestone { background: rgba(34,197,94,0.15); color: var(--green); }
+.tag-risk { background: rgba(239,68,68,0.15); color: var(--red); }
+.tag-strategy { background: rgba(34,197,94,0.1); color: var(--green); }
+.tag-restack { background: rgba(247,147,26,0.1); color: var(--btc); }
+.tag-upcoming { background: rgba(167,139,250,0.1); color: var(--purple); }
+
+.log-action {
   font-size: 13px;
-  color: #9A9490;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+  line-height: 1.35;
+}
+.log-reasoning {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+  display: none;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+.log-reasoning.open { display: block; }
+.log-toggle {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.log-impact {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--btc);
+  text-align: right;
+}
+.log-impact-sub {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 2px;
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+.log-section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--surface3);
+  border-bottom: 1px solid var(--border);
+}
+.lsd-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+.lsd-line { flex: 1; height: 1px; background: var(--border); }
+.lsd-live {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--btc);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* CONVERGENCE */
+.convergence-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 2.5rem;
+}
+
+.convergence-card {
+  background: var(--surface);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.convergence-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--btc);
+  opacity: 0.3;
+}
+
+.convergence-source {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--btc);
+  margin-bottom: 0.75rem;
+}
+
+.convergence-quote {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.convergence-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--btc);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.convergence-context {
+  font-size: 12px;
+  color: var(--text2);
   line-height: 1.6;
 }
 
-/* three pillars */
-.pillars {
+.convergence-disclaimer {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-left: 2px solid var(--border2);
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.6;
+}
+
+/* SOVEREIGN WEALTH LOOP */
+.swl-diagram {
   display: flex;
-  gap: 1px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 3rem 0;
+  flex-wrap: wrap;
 }
 
-.pillar {
-  flex: 1;
-  background: #111111;
-  padding: 1.25rem 1rem;
+.swl-node {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
   text-align: center;
+  min-width: 160px;
+  position: relative;
 }
 
-.pillar-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: #F7931A;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  margin-bottom: 6px;
+.swl-node.active {
+  border-color: var(--btc-line);
+  background: var(--btc-glow);
 }
 
-.pillar-title {
+.swl-node-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+  display: block;
+  color: var(--btc);
+}
+
+.swl-node-title {
   font-size: 12px;
   font-weight: 600;
-  color: #F0EDE8;
-  margin-bottom: 3px;
-  line-height: 1.3;
+  color: var(--text);
+  margin-bottom: 4px;
 }
 
-.pillar-desc {
-  font-size: 12px;
-  color: #827C76;
+.swl-node-sub {
+  font-size: 11px;
+  color: var(--text3);
   line-height: 1.4;
 }
 
-/* quote */
-.quote-block {
-  border-left: 2px solid rgba(247,147,26,0.3);
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 2.5rem;
-  text-align: left;
-  background: rgba(247,147,26,0.03);
-  border-radius: 0 4px 4px 0;
+.swl-arrow {
+  color: var(--btc);
+  font-size: 18px;
+  padding: 0 8px;
+  opacity: 0.5;
 }
-.quote-text {
-  font-family: 'Playfair Display', serif;
+
+.swl-loop-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+.loop-text {
+  font-family: var(--font-display);
   font-style: italic;
+  font-size: 18px;
+  color: var(--btc);
+}
+
+/* TOWARDS 2030 */
+.towards-hero {
+  text-align: center;
+  padding: 5rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.towards-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+}
+.towards-title em { font-style: italic; color: var(--btc); }
+
+.towards-sub {
+  font-size: 17px;
+  color: var(--text2);
+  line-height: 1.7;
+  font-weight: 300;
+  margin-bottom: 3rem;
+}
+
+.goal-scenarios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 2rem;
+}
+
+.goal-scenario {
+  background: var(--surface);
+  padding: 1.75rem;
+  text-align: center;
+}
+.goal-scenario.base { background: var(--surface2); }
+
+.scenario-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.scenario-btc {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+.scenario-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  margin-bottom: 0.75rem;
+}
+.scenario-desc {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.scenario-assumptions {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+}
+
+/* MERCH */
+.merch-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+.merch-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 50%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(247,147,26,0.04), transparent 60%);
+  pointer-events: none;
+}
+.merch-left { flex: 1; min-width: 280px; }
+.merch-coming {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+.merch-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+.merch-title em { font-style: italic; color: var(--btc); }
+.merch-desc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+  max-width: 480px;
+}
+.merch-previews {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.merch-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  min-width: 130px;
+}
+.merch-item-icon { font-size: 28px; margin-bottom: 8px; }
+.merch-item-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.merch-item-desc { font-size: 10px; color: var(--text3); font-family: var(--font-mono); }
+
+/* ANIMATIONS */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  transform: translateY(20px);
+  transition: transform 0.3s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.modal-sub {
   font-size: 14px;
-  color: #9A9490;
-  line-height: 1.65;
-  margin-bottom: 4px;
+  color: var(--text2);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
-.quote-attr {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: #827C76;
-  letter-spacing: 0.06em;
-}
-
-/* footer */
-.footer {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: #3C3A38;
-  letter-spacing: 0.08em;
-  line-height: 1.8;
-}
-.footer a { color: #3C3A38; text-decoration: none; }
-.footer a:hover { color: #827C76; }
-
-/* Beehiiv embed theming */
-.beehiiv-subscribe-form {
-  background: transparent !important;
-}
-iframe[src*="beehiiv"] {
-  border-radius: 4px;
-  width: 100% !important;
+.modal-close {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
 }
 
-/* responsive */
-@media (max-width: 480px) {
-  .form-row { flex-direction: column; }
-  .pillars { flex-direction: column; gap: 0; }
-  .pillar { border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .pillar:last-child { border-bottom: none; }
+.success-state {
+  text-align: center;
+  padding: 1rem 0;
+  display: none;
+}
+.success-icon {
+  font-size: 3rem;
+  color: var(--btc);
+  margin-bottom: 1rem;
+}
+.success-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.success-sub {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* SCROLL indicator */
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  margin-top: 3rem;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .founder-section { grid-template-columns: 1fr; gap: 3rem; }
+  .inflection-grid { grid-template-columns: 1fr; }
+  .convergence-grid { grid-template-columns: 1fr; }
+  .founding-top { grid-template-columns: 1fr; }
+  .founding-left { border-right: none; border-bottom: 1px solid var(--border); }
+  .framework-grid { grid-template-columns: 1fr; }
+  .goal-scenarios { grid-template-columns: 1fr; }
+  .referral-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-row { grid-template-columns: repeat(2, 1fr) !important; }
+  .signal-row { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .log-header, .log-entry { grid-template-columns: 90px 1fr !important; }
+  .log-header-cell:nth-child(2), .log-cell:nth-child(2) { display: none; }
+  .log-header-cell:last-child, .log-cell:last-child { display: none; }
 }
 </style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">my<span>bitcoin</span>treasury</a>
+  <ul class="nav-links">
+    <li><a href="#operation">The operation</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#log">Decision log</a></li>
+    <li><a href="#newsletter">Newsletter</a></li>
+    <li><a href="#dashboard">Towards 2030</a></li>
+    <li><a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener">Get the manual</a></li>
+  </ul>
+</nav>
 
-<div class="wrap">
-
-  <div class="wordmark">my<span>bitcoin</span>treasury</div>
-
-  <div class="kicker">
-    <span class="live-dot"></span>
-    Launching soon · Towards 2030
-  </div>
-
-  <h1>
-    The <em>Sovereign</em><br>
-    <em>Wealth Stack.</em><br>
-    Documented.
-  </h1>
-
-  <p class="sub">
-    One operator. One Bitcoin treasury. Every decision recorded in full, with complete reasoning, from January 2025 through to 2030. The institutional treasury playbook made transparent for individuals.
-  </p>
-
-  <div class="divider"></div>
-
-  <div class="pillars">
-    <div class="pillar">
-      <div class="pillar-num">01</div>
-      <div class="pillar-title">Acquire</div>
-      <div class="pillar-desc">Disciplined DCA guided by the power law and halving cycle</div>
+<!-- HERO -->
+<div class="hero full">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div style="display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;">
+      <div>
+        <div class="hero-kicker">
+          <span class="live-dot"></span>
+          Live operation · Since January 2025 · Towards 2030
+        </div>
+        <h1>
+          The <em>Sovereign</em><br>
+          Wealth Stack.<br>
+          Documented.
+        </h1>
+        <p class="hero-sub">
+          One operator. One Bitcoin treasury. Every decision recorded in full, with complete reasoning, from January 2025 through to 2030. The institutional treasury playbook made transparent for individuals.
+        </p>
+        <div class="hero-ctas">
+          <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener" class="btn-primary">
+            <i class="ti ti-book"></i>
+            Get the operators manual free
+          </a>
+          <a href="#operation" class="btn-secondary">
+            <i class="ti ti-arrow-down"></i>
+            Explore the operation
+          </a>
+        </div>
+        <div class="hero-stats" style="max-width:100%;">
+          <div class="hero-stat">
+            <div class="hero-stat-label">BTC held</div>
+            <div class="hero-stat-value btc" id="stat-btc">0.16404 ₿</div>
+            <div class="hero-stat-sub">since Jan 2025</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">Cost basis</div>
+            <div class="hero-stat-value" id="stat-basis">$80,466</div>
+            <div class="hero-stat-sub">avg per BTC</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">DCA signal</div>
+            <div class="hero-stat-value btc">2.8×</div>
+            <div class="hero-stat-sub">strong accumulate</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">Cycle day</div>
+            <div class="hero-stat-value" id="stat-cycle">786</div>
+            <div class="hero-stat-sub">post Apr 2024 halving</div>
+          </div>
+        </div>
+        <div class="scroll-hint">
+          <i class="ti ti-arrow-down"></i>
+          Scroll to explore the operation
+        </div>
+      </div>
+      <div class="hero-loop-diagram" aria-label="The Sovereign Wealth Stack: Acquisition and Self-Custody, Treasury Actions, Real World">
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--btc);margin-bottom:1.5rem;opacity:0.8;">The Sovereign Wealth Stack</div>
+        <div class="hero-loop-nodes">
+          <div class="hero-loop-node active">
+            <i class="ti ti-cpu" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;"></i>
+            <div class="hero-loop-title">Acquisition + custody</div>
+          </div>
+          <div class="hero-loop-connector"><i class="ti ti-arrow-down" style="color:var(--btc);opacity:0.4;font-size:16px;"></i></div>
+          <div class="hero-loop-node">
+            <i class="ti ti-building" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;opacity:0.8;"></i>
+            <div class="hero-loop-title">Treasury actions</div>
+          </div>
+          <div class="hero-loop-connector"><i class="ti ti-arrow-down" style="color:var(--btc);opacity:0.4;font-size:16px;"></i></div>
+          <div class="hero-loop-node">
+            <i class="ti ti-coin" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;opacity:0.6;"></i>
+            
+          </div>
+          <div class="hero-loop-connector"><i class="ti ti-arrow-down" style="color:var(--btc);opacity:0.4;font-size:16px;"></i></div>
+          <div class="hero-loop-node">
+            <i class="ti ti-credit-card" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;opacity:0.5;"></i>
+            <div class="hero-loop-title">Real world</div>
+          </div>
+          <div class="hero-loop-connector" style="position:relative;">
+            <div style="width:2px;height:20px;background:linear-gradient(to bottom,rgba(247,147,26,0.3),transparent);margin:0 auto;"></div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--btc);opacity:0.5;text-align:center;letter-spacing:0.1em;margin-top:4px;">build the stack</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="pillar">
-      <div class="pillar-num">02</div>
-      <div class="pillar-title">Secure</div>
-      <div class="pillar-desc">Progressive self-custody with a succession plan in place</div>
-    </div>
-    <div class="pillar">
-      <div class="pillar-num">03</div>
-      <div class="pillar-title">Build</div>
-      <div class="pillar-desc">Treasury actions that grow the stack without selling it</div>
-    </div>
   </div>
-
-  <div class="quote-block">
-    <div class="quote-text">"I exited Bitcoin in early 2015 near the cycle bottom and watched it recover to $20,000 from the sidelines. This framework is built on that lesson."</div>
-    <div class="quote-attr">— Michael Whitehorn · Operator · mybitcointreasury.finance</div>
-  </div>
-
-  <div class="form-wrap">
-    <div class="form-label" style="margin-bottom:0.5rem;">Get the operators manual on launch day — free</div>
-    <div class="form-note" style="margin-bottom:1.25rem;">The complete MyBitcoinTreasury thesis: 17 months of documented decision history, the power law framework, and the Towards 2030 roadmap. Delivered free on launch day.</div>
-    <div class="form-row">
-      <input type="email" id="cs-email" class="form-input" placeholder="your@email.com" autocomplete="email">
-      <button class="form-btn" onclick="handleSignup()">Notify me</button>
-    </div>
-    <div class="form-note" style="margin-top:0.75rem;" id="cs-note">We will email you the operators manual on launch day. No spam. Unsubscribe any time.</div>
-  </div>
-  <div class="success-msg" id="successMsg">
-    <div class="icon">₿</div>
-    <div class="title">You are on the list.</div>
-    <div class="body">The operators manual lands in your inbox on launch day. Stack building in the meantime.</div>
-  </div>
-
-  <div class="footer">
-    <div>mybitcointreasury.finance · Perth, Western Australia</div>
-    <div style="margin-top:4px;">Not financial advice · Educational purposes only</div>
-  </div>
-
 </div>
 
+<hr class="section-divider">
+
+<!-- FOUNDER -->
+<section id="operation">
+  <div class="section-label">The founder</div>
+  <div class="founder-section fade-up">
+    <div>
+      <div class="founder-quote">
+        "I exited Bitcoin in early 2015 during the market sell-off. That single decision cost me participation in one of the most significant appreciation periods in Bitcoin's history. This framework is built on that lesson."
+      </div>
+      <p class="founder-body">
+        My name is Michael Whitehorn. I am a 30-plus year veteran of sales, marketing and finance with a background spanning international high-tech electronics, semiconductor distribution, IT solutions, datacentres and financial services. I currently coach individuals in digital asset education through Digital Wealth Group in Perth, Western Australia.
+      </p>
+      <p class="founder-body">
+        I first discovered Bitcoin in late 2013, not from a social media feed but from a genuine fascination with the underlying technology. Specifically the encryption algorithms and the proof-of-work mining mechanism. That technical curiosity very quickly gave way to something more fundamental: the recognition that peer-to-peer electronic cash, the ability to transact directly with anyone in the world without a trusted intermediary, was a genuinely differentiated value proposition unlike anything that had existed before.
+      </p>
+      <p class="founder-body">
+        By early 2014 I was running Bitmain S1 ASIC miners. By mid-2014 I was collaborating with European crypto exchange CEX.io. I was in the operational infrastructure of Bitcoin before most Australians had encountered the word blockchain.
+      </p>
+      <p class="founder-body">
+        Then the correction came. Bitcoin peaked near $1,100 in late 2013 and fell through all of 2014. By early 2015 I exited my positions near the cycle bottom, and watched from the sidelines as Bitcoin recovered to $20,000 by December 2017. I had no framework for conviction. No understanding of cycle dynamics. No structured methodology for holding through a correction. The decision to exit was not irrational given what was knowable at the time. It became costly only in hindsight, when the cyclical structure became undeniable. In 2014 the four-year halving cycle had only one completed data point. The pattern was not yet legible. It is entirely legible now.
+      </p>
+      <p class="founder-body">
+        In mid-2017 I re-entered the space properly, this time collaborating with Perth datacentre company DC Two to establish crypto mining facilities in Australia, and co-founding DCoin, an AUSTRAC-registered digital currency exchange, where I served as Compliance Officer. By late 2019 I had joined Digital Wealth Group as a coach, spending the years since helping individuals understand and navigate digital assets, watching the four-year cycle pattern confirm itself across multiple halvings, watching the institutional adoption narrative build with Strategy, Metaplanet, TwentyOne Capital and Strive, and watching one gap remain persistently unfilled. The corporate treasury playbook existed. The individual equivalent did not.
+      </p>
+      <p class="founder-body">
+        In January 2025, when the regulatory environment shifted decisively and the structural case for individual Bitcoin treasury operations became undeniable, I built it.
+      </p>
+      <p class="founder-body">
+        What you are reading is the result. A complete, transparent, publicly documented Bitcoin treasury operation. Not financial advice. Not a fund. One operator's real journey, starting from a $500 per month DCA, deliberately chosen because it is an amount that is meaningful but accessible to ordinary people who are serious about building long-term financial sovereignty, documented in full, towards 2030.
+      </p>
+      <div class="founder-sig">Michael Whitehorn, mybitcointreasury.finance</div>
+    </div>
+    <div class="founder-timeline">
+      <div class="founder-milestone">
+        <div class="milestone-year">Late 2013</div>
+        <div class="milestone-text">
+          <strong>Discovery</strong>
+          Found Bitcoin through the technology, encryption algorithms, proof-of-work mining. Quickly understood the peer-to-peer electronic cash thesis. No trusted intermediary. Genuinely differentiated.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Early 2014</div>
+        <div class="milestone-text">
+          <strong>Bitmain S1 mining operation</strong>
+          Running ASIC miners. Operational in the Bitcoin infrastructure before most Australians had heard the word blockchain.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Mid 2014</div>
+        <div class="milestone-text">
+          <strong>CEX.io collaboration</strong>
+          Working with European crypto exchange CEX.io. Deep in the operational layer of early Bitcoin infrastructure.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Early 2015</div>
+        <div class="milestone-text">
+          <strong>The costly exit</strong>
+          No framework for conviction. Exited near the cycle bottom. Watched Bitcoin recover to $20,000 in 2017 from the sidelines. The lesson that built this framework.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Mid 2017</div>
+        <div class="milestone-text">
+          <strong>Re-entry, DC Two, and DCoin</strong>
+          Re-entered properly. Collaborated with Perth datacentre company DC Two to establish crypto mining facilities in Australia. Co-founded DCoin, an AUSTRAC-registered exchange, serving as Compliance Officer.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Late 2019</div>
+        <div class="milestone-text">
+          <strong>Digital Wealth Group</strong>
+          Joined DWG as a coach. Began helping individuals navigate digital assets professionally. Watched the four-year cycle pattern confirm itself across multiple halvings.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Jan 2025</div>
+        <div class="milestone-text">
+          <strong>Operation begins</strong>
+          US regulatory pivot. Trump executive order on digital assets. Gary Gensler exits SEC. The individual treasury playbook is built.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Oct 2025</div>
+        <div class="milestone-text">
+          <strong>Cycle peak: $126,198</strong>
+          The operation holds through the ATH. No sell. The 2015 lesson applied in reverse. Framework holds at the hardest moment.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Feb 2026</div>
+        <div class="milestone-text">
+          <strong>Correction low: ~$62,000</strong>
+          DCA continues through the deepest correction. The framework that didn't exist in 2015 holds in 2026. Every decision documented.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">Jun 2026</div>
+        <div class="milestone-text">
+          <strong>Goes live</strong>
+          Documented backtest becomes publicly accountable live operation. mybitcointreasury.finance launches.
+        </div>
+      </div>
+      <div class="founder-milestone">
+        <div class="milestone-year">→ 2030</div>
+        <div class="milestone-text">
+          <strong>The destination</strong>
+          Next halving Apr 2028. Projected cycle peak 2029–2030. Every decision between now and then: documented.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INFLECTION -->
+<hr class="section-divider">
+<section>
+  <div class="section-label">Why January 2025</div>
+  <h2 style="font-size: clamp(1.8rem, 3vw, 2.8rem); max-width: 700px; margin-bottom: 1rem;" class="fade-up">
+    The structural shift that made this operation necessary
+  </h2>
+  <p style="font-size: 15px; color: var(--text2); max-width: 680px; line-height: 1.8;" class="fade-up">
+    January 2025 was not an arbitrary starting point. It was the month when the operating environment for Bitcoin treasury management changed fundamentally and permanently. Three converging developments made individual Bitcoin treasury operations more structurally viable than at any prior point in Bitcoin's history.
+  </p>
+  <div class="inflection-grid fade-up">
+    <div class="inflection-card">
+      <div class="inflection-date">January 20, 2025</div>
+      <div class="inflection-title">The SEC pivot</div>
+      <div class="inflection-body">Gary Gensler exits on inauguration day. A crypto-friendly chair is installed on day one. Pending enforcement actions are paused. Years of regulatory headwind reverse direction in a single day, the signal that institutional capital had been waiting for.</div>
+    </div>
+    <div class="inflection-card">
+      <div class="inflection-date">January 23, 2025</div>
+      <div class="inflection-title">Executive order on digital assets</div>
+      <div class="inflection-body">Trump signs an executive order establishing the administration's policy to support the responsible growth and use of digital assets across all sectors of the economy. The first time a US administration has explicitly endorsed Bitcoin at the policy level.</div>
+    </div>
+    <div class="inflection-card">
+      <div class="inflection-date">March 6, 2025</div>
+      <div class="inflection-title">US Strategic Bitcoin Reserve</div>
+      <div class="inflection-body">Executive order establishing a Strategic Bitcoin Reserve with approximately 200,000 BTC as a national store of value. The US government, for the first time in history, officially treats Bitcoin as a reserve asset. The institutional playbook is now sovereign-endorsed.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+  <div class="dashboard-header">
+    <div>
+      <div class="section-label">Live dashboard</div>
+      <h2 style="font-size: clamp(1.5rem, 2.5vw, 2.2rem);">Operation status</h2>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span class="live-badge"><span class="live-dot" style="background:var(--btc)"></span>Live tracking since Jun 2026</span>
+      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:2px;" id="live-price-tag">BTC price loading…</span>
+    </div>
+  </div>
+
+  <div class="kpi-row fade-up" style="grid-template-columns:repeat(5,1fr);">
+    <div class="kpi">
+      <div class="kpi-label">BTC held</div>
+      <div class="kpi-value btc">0.16404 ₿</div>
+      <div class="kpi-sub">in self-custody</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total invested</div>
+      <div class="kpi-value">$13,200</div>
+      <div class="kpi-sub">DCA since January 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Current value</div>
+      <div class="kpi-value" id="kpi-current-value">loading…</div>
+      <div class="kpi-sub" id="kpi-pnl">–</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Avg cost basis</div>
+      <div class="kpi-value">$80,466</div>
+      <div class="kpi-sub">per BTC</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Power law zone</div>
+      <div class="kpi-value" style="color:var(--btc);font-size:15px;">Floor zone</div>
+      <div class="kpi-sub">within 8% as of 15 Aug</div>
+    </div>
+  </div>
+
+  <div class="chart-panel fade-up">
+    <div class="chart-tabs">
+      <button class="chart-tab active" onclick="switchChart('accumulation',this)">BTC accumulation</button>
+      <button class="chart-tab" onclick="switchChart('price',this)">Price vs cost basis</button>
+      <button class="chart-tab" onclick="switchChart('powerlaw',this)">Power law position</button>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="mainChart"></canvas>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+      <div style="width:2px;height:16px;background:var(--btc);border-radius:1px;opacity:0.7"></div>
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--btc);">Jun 2026, live from here</span>
+      <span style="font-size:10px;color:var(--text3);margin-left:8px;">Backtest history: Jan 2025 → May 2026 · Live operation: Jun 2026 →</span>
+    </div>
+    <div class="chart-legend" id="chartLegend"></div>
+    <div style="margin-top:6px;font-size:11px;color:var(--text3);line-height:1.6;">On the BTC accumulation tab, the shaded region shows a projected range through Dec 2030, derived from the DCA framework's own rules (known future halving-cycle phase timing, no guessing) and the power law corridor already shown on the Power Law tab (lower zone to midpoint, not a single price forecast). Illustrative only — not a prediction, and not revised once published.</div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);">Live power law reference: <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank" style="color:var(--btc);text-decoration:none;">mNAV · Bitcoin power law chart</a></div>
+  </div>
+
+  <div class="signal-row fade-up">
+    <div class="signal-card">
+      <div class="signal-title">Halving cycle phase</div>
+      <div class="signal-value" id="signal-day">Day –</div>
+      <div class="signal-desc" id="signal-phase-desc">Loading current cycle position… The operation executes on the 15th of each month. Bitcoin trades 24/7, 365 days a year. That is a feature, not a footnote.</div>
+    </div>
+    <div class="signal-card" style="border-color:var(--btc-line);">
+      <div class="signal-title">DCA signal multiplier</div>
+      <div class="signal-value" style="color:var(--btc);">2.8×</div>
+      <div class="signal-desc">Cycle phase (2.0×) + power law floor-zone adjustment (+0.8×) × moderate profile (1.0×). Price is within 8% of the calculated power law floor — a condition the framework weights more heavily than the standard lower-zone adjustment. Base DCA of $500 scales to $1,400 while both conditions hold.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-title">Next key milestone</div>
+      <div class="signal-value" style="font-size:20px;margin-bottom:8px;">Apr 2028</div>
+      <div class="signal-desc" id="signal-halving-countdown">5th halving. This is the next structural inflection point. The operation will document every DCA purchase, every decision, and every outside influence between now and that date.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);border-left:2px solid var(--btc-line);">
+    <div style="font-size:12px;color:var(--text2);line-height:1.7;">
+      <strong style="color:var(--text);">What does the framework say about current conditions?</strong> Price moved within 8% of the calculated power law floor for the first time since the operation began in June 2026 — a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading: 2.8x rather than the usual 1.5-2.0x range. That condition has now held for three consecutive monthly executions. The framework does not predict how long the floor zone will hold, it simply weights the DCA more heavily while price sits there. The operators manual documents the full three-tier power law framework and the treasury actions framework for operators who are ready to go beyond accumulation.
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- DECISION LOG -->
+<section id="log">
+  <div class="section-label">Decision log</div>
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;" class="fade-up">
+    <div>
+      <h2 style="font-size: clamp(1.5rem, 2.5vw, 2.2rem); margin-bottom: 0.5rem;">Every decision. Full reasoning.</h2>
+      <p style="font-size:14px;color:var(--text2);max-width:600px;line-height:1.7;">Backtest documented from January 2025. Live and publicly accountable from June 2026. Click any entry to read the complete reasoning behind the decision. Backtest entries use representative mid-month prices. Live entries record actual execution date and price.</p>
+    </div>
+    <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);text-align:right;">
+      <div>Strategy: <span style="color:var(--btc);">Moderate</span></div>
+      <div>Entries: <span style="color:var(--text2);">13 documented + live</span></div>
+      <div style="margin-top:3px;">Execution: <span style="color:var(--btc);">15th each month · 24/7</span></div>
+    </div>
+  </div>
+  <div class="log-header fade-up" style="grid-template-columns:100px 90px 1fr 100px;">
+    <div class="log-header-cell">Date / Price</div>
+    <div class="log-header-cell">Type</div>
+    <div class="log-header-cell">Decision and Reasoning</div>
+    <div class="log-header-cell" style="text-align:right;">Impact</div>
+  </div>
+  <div class="log-entries fade-up" id="decisionLog">
+<div class="sub-prompt fade-up">
+  <div class="sub-prompt-left">
+    <div class="sub-prompt-eyebrow">Subscriber access</div>
+    <div class="sub-prompt-title">Read the full reasoning behind every decision</div>
+    <div class="sub-prompt-desc">Free visitors see the decision headline. Subscribers read the complete thinking — the framework applied, the outside conditions considered, what the operation was watching, and what comes next. Every entry, back to January 2025 — with new entries added every fortnight as the operation continues.</div>
+  </div>
+  <div class="sub-prompt-right">
+    <button class="btn-primary" onclick="openSubModal()">
+      <i class="ti ti-mail"></i>
+      Become a founding member
+    </button>
+    <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener" class="btn-ghost">Get the manual free first</a>
+  </div>
+</div>
+</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Sovereign Wealth Stack -->
+<section>
+  <div class="section-label">The concept</div>
+  <div style="max-width:760px;margin-bottom:1rem;" class="fade-up">
+    <h2 style="font-size:clamp(1.8rem,3vw,2.8rem);margin-bottom:1rem;">The Sovereign Wealth Stack</h2>
+    <p style="font-size:15px;color:var(--text2);line-height:1.8;">Acquire Bitcoin systematically. Hold it in self-custody. Apply treasury actions to build and preserve value over time. Exit to the real world only when deliberately chosen. The stack is never sold on impulse. The Bitcoin holding grows. That is the strategy.</p>
+  </div>
+  <div class="swl-diagram fade-up">
+    <div class="swl-node active">
+      <i class="ti ti-coin swl-node-icon"></i>
+      <div class="swl-node-title">Acquisition</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px;">and self-custody</div>
+    </div>
+    <div class="swl-arrow"><i class="ti ti-arrow-right"></i></div>
+    <div class="swl-node">
+      <i class="ti ti-building-bank swl-node-icon"></i>
+      <div class="swl-node-title">Treasury actions</div>
+    </div>
+    <div class="swl-arrow"><i class="ti ti-arrow-right"></i></div>
+    <div class="swl-node">
+      <i class="ti ti-world swl-node-icon"></i>
+      <div class="swl-node-title">Real world</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px;">deliberate exit only</div>
+    </div>
+  </div>
+  <div class="swl-loop-badge fade-up">
+    <i class="ti ti-refresh" style="color:var(--btc);font-size:16px;"></i>
+    <span class="loop-text">Stack never sold. Value extracted without disposal. Bitcoin grows.</span>
+  </div>
+  <div class="phase-timeline fade-up" style="margin-top:2.5rem;">
+    <div class="phase-row done">
+      <div class="phase-num"><i class="ti ti-check" style="font-size:13px;"></i></div>
+      <div class="phase-body">
+        <div class="phase-title">Phase 1: Foundation</div>
+        <div class="phase-desc">Exchange setup, first BTC purchase, basic security. Completed Jan 2025.</div>
+      </div>
+      <div class="phase-status"><span class="phase-badge badge-done">Complete</span></div>
+    </div>
+    <div class="phase-row done">
+      <div class="phase-num"><i class="ti ti-check" style="font-size:13px;"></i></div>
+      <div class="phase-body">
+        <div class="phase-title">Phase 2: Accumulation</div>
+        <div class="phase-desc">DCA strategy live, cost basis tracking, hardware wallet research. Running since Jan 2025.</div>
+      </div>
+      <div class="phase-status"><span class="phase-badge badge-done">Ongoing</span></div>
+    </div>
+    <div class="phase-row done">
+      <div class="phase-num"><i class="ti ti-check" style="font-size:13px;"></i></div>
+      <div class="phase-body">
+        <div class="phase-title">Phase 3: Custody</div>
+        <div class="phase-desc">Hardware wallet setup, stack migrated to self-custody, succession plan in place. Completed Apr 2026.</div>
+      </div>
+      <div class="phase-status"><span class="phase-badge badge-done">Complete</span></div>
+    </div>
+    <div class="phase-row current">
+      <div class="phase-num">4</div>
+      <div class="phase-body">
+        <div class="phase-title">Phase 4: Utilisation</div>
+        <div class="phase-desc">Treasury actions: disciplined deployment of accumulated stack, active position management, and income or growth strategy. Currently in planning phase.</div>
+      </div>
+      <div class="phase-status"><span class="phase-badge badge-active">In progress</span></div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">5</div>
+      <div class="phase-body">
+        <div class="phase-title">Phase 5: Sovereign Wealth Stack</div>
+        <div class="phase-desc">Full treasury operations active. Sovereign Wealth Stack operational. Real world access on operator terms. Target: 2028–2030.</div>
+      </div>
+      <div class="phase-status"><span class="phase-badge badge-next">Towards 2030</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- NEWSLETTER -->
+<section id="newsletter">
+  <div class="section-label">The fortnightly newsletter</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-bottom:0;" class="fade-up">
+    <div>
+      <h2 style="font-size:clamp(1.5rem,2.5vw,2.2rem);margin-bottom:1rem;">Every two weeks. Documented. Reasoned.</h2>
+      <p style="font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:1.25rem;">Subscribers receive a fortnightly newsletter that connects what the operation did in the past two weeks to the broader conditions that shaped those decisions. Not a price prediction. Not a trading signal. A documented account of one operator's Bitcoin treasury thinking in the context of the world around it.</p>
+      <p style="font-size:15px;color:var(--text2);line-height:1.8;">Each issue is written from the operation's perspective — what happened, what the frameworks said, what outside conditions were relevant, and what is being watched going forward. The same intellectual honesty that runs through the decision log, delivered directly to your inbox every fortnight.</p>
+    </div>
+    <div class="newsletter-grid" style="margin-top:0;">
+      <div class="newsletter-card">
+        <span class="newsletter-tag ntag-ops">Operations</span>
+        <div class="newsletter-card-title">Strategy actions this fortnight</div>
+        <div class="newsletter-card-body">What the operation actually did. DCA purchases made, amounts deployed, cost basis movement, and the DCA signal multiplier in effect. If a collateral decision was made or being considered, documented in full with the framework reasoning.</div>
+      </div>
+      <div class="newsletter-card">
+        <span class="newsletter-tag ntag-btc">Bitcoin</span>
+        <div class="newsletter-card-title">Bitcoin market conditions</div>
+        <div class="newsletter-card-body">Where BTC sits in the power law corridor and halving cycle. The current signal calculation and what it means for the coming fortnight. Any significant price or on-chain developments worth noting in the context of the accumulation thesis.</div>
+      </div>
+      <div class="newsletter-card">
+        <span class="newsletter-tag ntag-macro">Macro</span>
+        <div class="newsletter-card-title">Global macro influences</div>
+        <div class="newsletter-card-body">How the outside world is affecting the Bitcoin thesis. Monetary policy, dollar dynamics, sovereign debt conditions, institutional flows, and regulatory developments — connected to what they mean for a long-term Bitcoin treasury operator.</div>
+      </div>
+      <div class="newsletter-card">
+        <span class="newsletter-tag ntag-cycle">Cycle</span>
+        <div class="newsletter-card-title">Cycle context and forward watch</div>
+        <div class="newsletter-card-body">Where we are in the four-year halving cycle narrative. What the framework suggests about the coming period. What conditions would change the operation's posture — not what you should do, but what this operation is watching and why.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="newsletter-preview fade-up">
+    <div class="preview-header">The Fortnightly · Issue 05</div>
+    <div class="preview-meta">Week ending 22 August 2026 · Bitcoin treasury operations · mybitcointreasury.finance</div>
+    <div class="preview-section">
+      <div class="preview-section-label">Strategy actions</div>
+      <div class="preview-section-body">On 15 August the scheduled DCA purchase executed as planned: <strong>$1,400 deployed at $63,100</strong> — the third consecutive month at the elevated 2.8x tier. The calculated power law floor sat at $62,492, just 0.97% below spot, keeping price inside the 8% floor-zone band. The framework has no mechanism for fatigue. It only sizes according to the zone that prevails on the day.</div>
+    </div>
+    <div class="preview-section">
+      <div class="preview-section-label">Bitcoin conditions</div>
+      <div class="preview-section-body">The significance of this period lies in what happened <em>after</em> the 15 August purchase. Within days, price expanded sharply — a move of roughly 20% in 72 hours, the strongest multi-day advance in months, taking Bitcoin back above the 200-day moving average for the first time since November 2025. The capital deployed at $63,100 participated fully in that expansion.</div>
+    </div>
+    <div class="preview-section preview-blurred">
+      <div class="preview-section-label">Global macro influences</div>
+      <div class="preview-section-body">Three developments arrived in close succession: an expanded US Treasury bond buyback programme, a White House meeting with crypto industry executives urging passage of the CLARITY Act, and the strongest weekly Bitcoin ETF inflows since October — combined with a large short squeeze as bearish positioning unwound.</div>
+    </div>
+    <div class="preview-section preview-blurred">
+      <div class="preview-section-label">Cycle context and forward watch</div>
+      <div class="preview-section-body">Three consecutive elevated purchases now, and the capital deployed at those levels has participated in the sharp expansion that followed. The reclaim of the 200-day moving average after roughly 270 sessions below it is a genuine change in market structure. Whether price can hold the line as support, rather than merely touch it, is the next data point the operation is watching.</div>
+    </div>
+    <div class="preview-unlock">
+      <span style="color:var(--text3);font-size:12px;">Macro and cycle sections available to subscribers.</span>
+    </div>
+  </div>
+
+  <div class="sub-prompt fade-up" style="margin-top:1.5rem;">
+    <div class="sub-prompt-left">
+      <div class="sub-prompt-eyebrow">Subscribe</div>
+      <div class="sub-prompt-title">Every fortnight, directly to your inbox</div>
+      <div class="sub-prompt-desc">Subscribers receive the full newsletter with all four sections, the complete decision log reasoning, and early notification of upcoming decision points. It is a documented Bitcoin treasury operation delivered as a fortnightly read, growing with every issue. Straightforward, honest, and grounded in a decade of direct experience in the space.</div>
+    </div>
+    <div class="sub-prompt-right">
+      <button class="btn-primary" onclick="openSubModal()">
+        <i class="ti ti-mail"></i>
+        Become a founding member
+      </button>
+      <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener" class="btn-ghost">Get the manual free first</a>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+
+
+
+<hr class="section-divider">
+
+<!-- CONVERGENCE -->
+<section>
+  <div class="section-label">External context</div>
+  <h2 style="font-size:clamp(1.5rem,2.5vw,2.2rem);margin-bottom:1rem;" class="fade-up">Independent frameworks. Converging conclusions.</h2>
+  <p style="font-size:15px;color:var(--text2);max-width:680px;line-height:1.8;margin-bottom:0;" class="fade-up">Five independent voices, institutional research, mathematical physics, the corporate treasury playbook, an experienced individual investor, and the US government itself, are arriving at broadly similar conclusions about Bitcoin's long-term trajectory. This convergence is the context in which this operation runs. It is not a guarantee of any outcome.</p>
+  <div class="convergence-grid fade-up">
+    <div class="convergence-card">
+      <div class="convergence-source">ARK Invest · Big Ideas 2026</div>
+      <div class="convergence-number">$750k</div>
+      <div class="convergence-quote">"Bitcoin is maturing as the leader of a new institutional asset class."</div>
+      <div class="convergence-context">ARK's 2026 report projects a Bitcoin market cap of approximately $16 trillion by 2030, implying a base case of ~$750,000 per BTC. Bull case: $1.2 million. Bear case: $500,000. Driven by institutional adoption, digital gold narrative, and generational wealth transfer. Source: ARK Big Ideas 2026.</div>
+    </div>
+    <div class="convergence-card">
+      <div class="convergence-source">Giovanni Santostasi · Power Law Theory</div>
+      <div class="convergence-number">$1M</div>
+      <div class="convergence-quote">"Bitcoin's price reflects the deterministic mathematical consequences of its network topology."</div>
+      <div class="convergence-context">The same power law framework that drives the DCA signal engine on this site projects ~$1 million per BTC within approximately 8 years with 90% stated confidence. Source: giovannisantostasi.medium.com</div>
+    </div>
+    <div class="convergence-card">
+      <div class="convergence-source">Michael Saylor · Strategy</div>
+      <div class="convergence-number">Digital capital</div>
+      <div class="convergence-quote">"Just keep buying Bitcoin with your spare capital. It's going to appreciate against the dollar forever."</div>
+      <div class="convergence-context">Strategy is the institutional proof of concept for this operation's individual equivalent. Saylor's documented accumulation through every correction and refusal to sell through 50%+ drawdowns mirror the framework documented here, at institutional scale. Source: Digital Asset Summit 2026.</div>
+    </div>
+    <div class="convergence-card">
+      <div class="convergence-source">Mark Moss · Perpetual Bitcoin Machine</div>
+      <div class="convergence-number">$1M by 2030</div>
+      <div class="convergence-quote">"Most Bitcoiners are still operating with a fiat mindset, and will quietly lose the wealth game even with Bitcoin in cold storage."</div>
+      <div class="convergence-context">A 25-year investor and Chief Bitcoin Strategist of Satsuma Technology, Mark Moss presented the Perpetual Bitcoin Machine framework at Bitcoin Vegas 2026, arguing for a personal treasury built to compound across generations. He quantifies Bitcoin's liquidity sensitivity at roughly 8.95x that of gold. Source: Bitcoin Magazine, Bitcoin Vegas 2026.</div>
+    </div>
+    <div class="convergence-card">
+      <div class="convergence-source">Scott Bessent · US Treasury Secretary</div>
+      <div class="convergence-number">Deliberate speed</div>
+      <div class="convergence-quote">"We are proceeding with all deliberate speed, and we are making sure we use best practices and things will be durable for the future."</div>
+      <div class="convergence-context">Testifying before the Senate Finance Committee on 3 June 2026, Bessent confirmed the US Strategic Bitcoin Reserve, holding an estimated $15 to $20 billion in BTC, continues to be built out under Executive Order 14233. No open-market purchases are planned, the reserve grows only through law-enforcement forfeiture, and Bessent urged passage of the CLARITY Act before the August 2026 recess. Source: Senate Finance Committee testimony, 3 June 2026.</div>
+    </div>
+    <div class="convergence-card">
+      <div class="convergence-source">Bitcoin halving cycle · Historical data</div>
+      <div class="convergence-number">2029-30</div>
+      <div class="convergence-quote">"The 5th halving in April 2028 sets the clock for the next cycle peak."</div>
+      <div class="convergence-context">Four completed halving cycles. Each followed the same broad pattern: supply shock, 12 to 18 month appreciation phase, ATH, correction. The 5th halving in April 2028 places the projected next cycle peak in 2029-2030, consistent with where the institutional, individual, and mathematical frameworks point. Source: charts.bitbo.io/halving-progress</div>
+    </div>
+  </div>
+  <div class="convergence-disclaimer fade-up">
+    These are independent analytical views presented as educational context. MyBitcoinTreasury does not endorse any specific price target. The operation runs according to its documented methodology regardless of market outcomes. Nothing on this site constitutes financial advice. All forecasts carry the real possibility of being materially wrong.
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- SPECIALIST RESOURCES -->
+<section>
+  <div class="section-label">Specialist resources</div>
+  <h2 style="font-size:clamp(1.5rem,2.5vw,2.2rem);margin-bottom:0.75rem;" class="fade-up">Where this operation refers out</h2>
+  <p style="font-size:14px;color:var(--text2);max-width:680px;line-height:1.8;margin-bottom:0;" class="fade-up">This operation documents accumulation, custody, and treasury strategy. It does not provide mortgage broking, tax advice, or succession planning. Where those gaps appear, the framework points to licensed specialists rather than attempting to fill the gap itself. These are professional referrals, not platform partnerships. New specialist resources are introduced through The Fortnightly as they are identified and vetted, then added here for ongoing reference.</p>
+  <div class="convergence-grid fade-up" style="margin-top:2rem;">
+    <div class="convergence-card">
+      <div class="convergence-source">The On Chain Advisory Group</div>
+      <div class="convergence-number" style="font-size:1.6rem;">Mortgage &amp; Tax</div>
+      <div class="convergence-quote">"Buying property without selling crypto."</div>
+      <div class="convergence-context"><strong style="color:var(--text);">The gap:</strong> A Bitcoin holder approaching a property purchase or a tax structuring decision needs licensed advice this operation cannot give. <strong style="color:var(--text);">Who they are:</strong> Mortgage On Chain and Tax On Chain, together as The On Chain Advisory Group, are Australian, AFCA-member, crypto-aware mortgage broking and tax accounting specialists with over $1.5 billion in loans facilitated and partnerships across 80-plus lenders. <strong style="color:var(--text);">How to engage:</strong> <a href="https://mortgageonchain.com.au" target="_blank" rel="noopener">mortgageonchain.com.au</a> and <a href="https://taxonchain.com.au" target="_blank" rel="noopener">taxonchain.com.au</a>.</div>
+    </div>
+    <div class="convergence-card">
+      <div class="convergence-source">ICEplan · Bradshaw Knox</div>
+      <div class="convergence-number" style="font-size:1.6rem;">Succession</div>
+      <div class="convergence-quote">"What happens to a self-custodied stack if the operator is no longer here to manage it."</div>
+      <div class="convergence-context"><strong style="color:var(--text);">The gap:</strong> Self-custody concentrates responsibility with the operator alone. Without documented succession, a stack can become permanently inaccessible. <strong style="color:var(--text);">Who they are:</strong> ICEplan, by Bradshaw Knox, provides structured succession and estate documentation specifically suited to self-custodied digital assets. <strong style="color:var(--text);">How to engage:</strong> <a href="https://bradshawknox.com/iceplan/" target="_blank" rel="noopener">bradshawknox.com/iceplan</a>.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- FREE MANUAL MODAL -->
+<div class="modal-overlay" id="freeModal" onclick="closeFreeModal(event)">
+  <div class="modal" style="position:relative;max-width:480px;">
+    <button class="modal-close" onclick="closeFreeModal()"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Get the operators manual</div>
+    <div class="modal-sub">The complete MyBitcoinTreasury thesis: documented history starting January 2025, the power law framework, the decision log, The Sovereign Wealth Stack, and the Towards 2030 roadmap. Free, via email.</div>
+    <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1rem;">No spam. The operators manual delivered to your inbox, then fortnightly updates from the operation. Unsubscribe any time.</p>
+    <script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" data-beehiiv-form="a7ac9d47-c67f-4bc0-9950-ff950cc4f8a8"></script>
+  </div>
+</div>
+
+<!-- SUBSCRIPTION MODAL -->
+<div class="modal-overlay" id="subModal" onclick="closeSubModal(event)">
+  <div class="modal" style="position:relative;max-width:640px;" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeSubModal()"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Subscribe to the operation</div>
+    <div class="modal-sub">Fortnightly newsletter, complete decision log reasoning, and early notification of upcoming decisions. A documented Bitcoin treasury operation delivered directly to your inbox.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;">
+      <a href="https://buy.stripe.com/cNiaEW7mx6oXfyEdD0es000" target="_blank" rel="noopener" style="text-decoration:none;display:block;border:2px solid var(--btc);background:var(--btc-glow);border-radius:var(--radius-lg);padding:1rem;text-align:center;position:relative;">
+        <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--btc);color:#0a0a0c;font-size:9px;font-weight:700;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;white-space:nowrap;">FIRST 200 ONLY</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--btc);margin-bottom:4px;font-weight:600;margin-top:4px;">Foundation</div>
+        <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$195</div>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">one-off &middot; to Dec 2029</div>
+      </a>
+      <a href="https://buy.stripe.com/aFa5kC8qB00z7280Qees001" target="_blank" rel="noopener" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600;">Annual</div>
+        <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$159</div>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">per year</div>
+      </a>
+      <a href="https://buy.stripe.com/00w6oG8qB7t19ag0Qees002" target="_blank" rel="noopener" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600;">Monthly</div>
+        <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$19</div>
+        <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">per month</div>
+      </a>
+    </div>
+    <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1rem;">Foundation is a one-off payment, limited to the first 200 subscribers, covering access through to December 2029. Annual and Monthly are ongoing subscriptions, cancel any time. All payments processed securely via Stripe.</p>
+    <p style="font-size:11px;color:var(--text3);margin-top:0.75rem;line-height:1.5;">This subscription covers Bitcoin treasury education and documented operational content only. It does not constitute financial advice.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">my<span>bitcoin</span>treasury</a>
+      <div class="footer-tagline">The Sovereign Wealth Stack &middot; Towards 2030</div>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Operation</div>
+        <a href="#operation">The founder</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#log">Decision log</a>
+        <a href="#newsletter">Newsletter</a>
+        <a href="#dashboard">Towards 2030</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Framework</div>
+        <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener">Operators manual</a>
+        <a href="#">Power law theory</a>
+        <a href="#">Halving cycle</a>
+        <a href="#">Custody pathway</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Sources</div>
+        <a href="https://giovannisantostasi.medium.com/the-bitcoin-power-law-theory-962dfaf99ee9" target="_blank">Power Law &middot; Santostasi</a>
+        <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank">mNAV &middot; Live power law chart</a>
+        <a href="https://charts.bitbo.io/long-term-power-law/" target="_blank">Bitbo &middot; Power law chart</a>
+        <a href="https://charts.bitbo.io/halving-progress/" target="_blank">Bitbo &middot; Halving progress</a>
+        <a href="https://bradshawknox.com/iceplan/" target="_blank">ICEplan &middot; Bradshaw Knox</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">mybitcointreasury.finance &middot; v1.0 &middot; June 2026</div>
+    <div class="footer-disclaimer">This site documents one operator's personal Bitcoin treasury for educational purposes only. Nothing here constitutes financial advice, investment advice, or any other form of regulated advice. Always consult a qualified professional. Past performance of any strategy is not indicative of future results.</div>
+  </div>
+</footer>
+
 <script>
-function handleSignup() {
-  const email = document.getElementById('cs-email').value.trim();
-  if(!email || !email.includes('@') || !email.includes('.')) {
-    const input = document.getElementById('cs-email');
-    input.style.borderColor = '#EF4444';
-    input.focus();
-    setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.07)'; }, 2000);
-    return;
-  }
-  // Send to Beehiiv via magic link with email substituted in
-  const beehiivUrl = 'https://magic.beehiiv.com/v1/46ac1610-395c-4416-b3af-4730b85f5604?email=' + encodeURIComponent(email);
-  window.open(beehiivUrl, '_blank');
-  // Show success state on this page
-  document.querySelector('.form-wrap').style.display = 'none';
-  document.getElementById('successMsg').style.display = 'block';
+const LOG_ENTRIES = [
+  { year: '2025', date:"Jan '25", price:"$97k", tag:"dca", tl:"DCA", action:"First DCA purchase at $97,000. Strategy: accumulate, hold, no complexity.", reasoning:"Strategy begins below the January ATH of $109k. One rule: buy $500 on the 15th, every month. No timing, no forecast. Hold in exchange custody until 0.05 BTC threshold reached for hardware wallet migration.", impact:"+0.005154 \u20bf", live:false },
+  { year: '2025', date:"Feb '25", price:"$97.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule. Base rate, no deviation.", reasoning:"Lower prices mean more sats for the same fiat when they come. Pausing DCA during a drawdown is the most common and most costly mistake a long-term accumulator makes.", impact:"+0.00512 \u20bf", live:false },
+  { year: '2025', date:"Mar '25", price:"$83.7k", tag:"dca", tl:"DCA", action:"Price corrects 14% from February. DCA executed without hesitation.", reasoning:"Base rate maintained through the pullback. The framework does not react to single-month drawdowns, it reacts to structural conditions.", impact:"+0.005974 \u20bf", live:false },
+  { year: '2025', date:"Apr '25", price:"$83.6k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Consolidation continues. Base rate maintained.", impact:"+0.00598 \u20bf", live:false },
+  { year: '2025', date:"May '25", price:"$101.7k", tag:"dca", tl:"DCA", action:"Price recovers above $100k. Base rate maintained.", reasoning:"No change in posture on the way back up. The framework's discipline runs both directions.", impact:"+0.00492 \u20bf", live:false },
+  { year: '2025', date:"Jun '25", price:"$104.9k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained.", impact:"+0.004766 \u20bf", live:false },
+  { year: '2025', date:"Jul '25", price:"$117.4k", tag:"strategy", tl:"Strategy", action:"Cycle ATH approached. Framework assessed at elevated prices.", reasoning:"With price approaching ATH territory, the framework was used to assess conditions. The decision: maintain accumulation discipline at base rate. No deviation from the DCA plan.", impact:"+0.004269 \u20bf", live:false },
+  { year: '2025', date:"Aug '25", price:"$117k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained near cycle highs.", impact:"+0.004274 \u20bf", live:false },
+  { year: '2025', date:"Sep '25", price:"$114.9k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained.", impact:"+0.00435 \u20bf", live:false },
+  { year: '2025', date:"Oct '25", price:"$111k", tag:"milestone", tl:"Milestone", action:"Cycle ATH of $126,198 reached this month. Framework holds. No sell.", reasoning:"At the all-time high the temptation to deviate from the plan is at its strongest. Decision: continue base DCA exactly as documented. The pull to time an exit is genuine and documented here. The framework held at the hardest moment, which is the entire point of having one.", impact:"~0.0493 \u20bf total", live:false },
+  { year: '2025', date:"Nov '25", price:"$94.8k", tag:"custody", tl:"Custody", action:"Stack reaches 0.05 BTC. Hardware wallet purchased. Full self-custody secured.", reasoning:"Custody milestone reached. Stack migrated from exchange to hardware wallet. Seed phrase secured in two physical locations. Passphrase set. Succession documentation initiated. Not your keys, not your coins.", impact:"~0.0546 \u20bf secured", live:false },
+  { year: '2025', date:"Dec '25", price:"$87k", tag:"strategy", tl:"Strategy", action:"Correction deepens, 30% below the October ATH. Base rate maintained.", reasoning:"The DCA signal was reviewed: still inside Bull Run phase, no elevation triggered. Decision: continue disciplined accumulation. The framework held through the correction as designed.", impact:"+0.00575 \u20bf", live:false },
+  { year: '2026', date:"Jan '26", price:"$95.6k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Bull Run phase (month 20.9 post-halving). No elevation trigger active. Base DCA executed on schedule, on the 15th, regardless of the broader correction underway.", impact:"+0.00523 \u20bf", live:false },
+  { year: '2026', date:"Feb '26", price:"$68.5k", tag:"risk", tl:"Correction low", action:"Price falls sharply. DCA executed without deviation, still at base rate.", reasoning:"Bull Run phase (month 21.9), still no elevation trigger active despite the sharp price move. The framework provides no exception for steep corrections. Disciplined accumulation continued at base rate on schedule.", impact:"+0.0073 \u20bf", live:false },
+  { year: '2026', date:"Mar '26", price:"$71.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Bull Run phase continues. Base rate maintained.", impact:"+0.006999 \u20bf", live:false },
+  { year: '2026', date:"Apr '26", price:"$74k", tag:"milestone", tl:"Milestone", action:"Final month of Bull Run phase. Base rate maintained.", reasoning:"0.1 BTC accumulated through disciplined DCA from January 2025. Hardware wallet custody confirmed. Succession documentation complete. Last month before the framework enters Post-Peak Correction (month 25) and the Cycle Phase multiplier activates.", impact:"~0.0866 \u20bf held", live:false },
+  { year: '2026', date:"May '26", price:"$78.9k", tag:"dca", tl:"DCA", action:"First month of Post-Peak Correction. Cycle Phase multiplier (2.0x) activates. $1,000 deployed.", reasoning:"Month 25 post-halving. DCA signal: Post-Peak Correction phase (2.0x base), no floor-zone adjustment this month. The framework's structural window for elevated accumulation begins.", impact:"+0.01267 \u20bf", live:false },
+  { year: '2026', date:"Jun '26", price:"$66.5k", tag:"dca", tl:"DCA", action:"Both triggers active: Post-Peak Correction (2.0x) + Power Law floor adjustment (+0.8x) = 2.8x. $1,400 deployed.", reasoning:"Price moved within 8% of the calculated power law floor for the first time since the operation began \u2014 a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading. No discretionary action taken, the framework's response is mechanical: the floor-zone multiplier engages automatically based on the 8% threshold.", impact:"+0.021 \u20bf", live:false },
+  { year: '2026', date:"Jul '26", price:"$64.9k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, second consecutive month. $1,400 deployed.", reasoning:"Floor $60,753 \u2014 price sat 6.83% above it, still inside the 8% band. Both triggers remain active. The multiplier is evaluated fresh at each execution based on price's position relative to the 8% band at that time, not a one-time signal.", impact:"+0.021572 \u20bf", live:false },
+  { year: '2026', date:"Aug '26", price:"$63.1k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, third consecutive month. $1,400 deployed.", reasoning:"Floor $62,492 \u2014 price sat just 0.97% above it, comfortably inside the 8% band. Three consecutive elevated executions. The framework has no mechanism for fatigue \u2014 it only sizes according to the zone that prevails on the day.", impact:"+0.022187 \u20bf", live:true },
+];
+
+function buildLog() {
+  const container = document.getElementById('decisionLog');
+  let prevYear = null;
+  LOG_ENTRIES.forEach(e => {
+    if(e.divider) {
+      const div = document.createElement('div');
+      div.className = 'log-section-divider';
+      div.innerHTML = '<div class="lsd-line"></div><div class="lsd-live"><span class="live-dot" style="background:var(--btc);animation:pulse 2s infinite;"></span>Live operation from here, Jun 2026</div><div class="lsd-line"></div>';
+      container.appendChild(div);
+      return;
+    }
+    const yr = e.date.includes("25") ? "2025" : "2026";
+    if(yr !== prevYear) {
+      const div = document.createElement('div');
+      div.className = 'log-section-divider';
+      div.innerHTML = '<div class="lsd-label">'+yr+'</div><div class="lsd-line"></div>';
+      container.appendChild(div);
+      prevYear = yr;
+    }
+    const row = document.createElement('div');
+    row.className = 'log-entry' + (e.live ? ' live-entry' : '');
+    row.innerHTML =
+      '<div class="log-cell"><div class="log-date">'+e.date+'</div><div class="log-price">'+e.price+'</div></div>'+
+      '<div class="log-cell"><span class="log-tag tag-'+e.tag+'">'+e.tl+'</span></div>'+
+      '<div class="log-cell" onclick="toggleReasoning(this)"><div class="log-action">'+e.action+'</div><div class="log-reasoning">'+e.reasoning+'</div><div class="log-toggle"><i class="ti ti-chevron-down" style="font-size:11px"></i> reasoning</div></div>'+
+      '<div class="log-cell"><div class="log-impact">'+e.impact+'</div></div>';
+    container.appendChild(row);
+  });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  const input = document.getElementById('cs-email');
-  if(input) {
-    input.addEventListener('keydown', function(e) {
-      if(e.key === 'Enter') handleSignup();
-    });
+function toggleReasoning(cell) {
+  const r = cell.querySelector('.log-reasoning');
+  const t = cell.querySelector('.log-toggle');
+  r.classList.toggle('open');
+  t.innerHTML = r.classList.contains('open')
+    ? '<i class="ti ti-chevron-up" style="font-size:11px"></i> hide'
+    : '<i class="ti ti-chevron-down" style="font-size:11px"></i> reasoning';
+}
+
+buildLog();
+
+const months = ["Jan '25","Feb '25","Mar '25","Apr '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26","Mar '26","Apr '26","May '26","Jun '26","Jul '26","Aug '26"];
+const prices = [97000,97500,83700,83600,101700,104900,117400,117000,114900,111000,94800,87000,95600,68500,71500,74000,78900,66500,64900,63100];
+const btcActual = [0.005154,0.010274,0.016248,0.022228,0.027148,0.031914,0.036183,0.040457,0.044807,0.049307,0.054577,0.060327,0.065557,0.072857,0.079856,0.086616,0.099286,0.120286,0.141858,0.164045];
+const costBasis = [97012,97333,92319,89977,92088,94003,96731,98870,100431,101405,100775,99458,99150,96079,93919,92362,90647,86461,83182,80466];
+const plFloor = [36400,37500,38600,39700,40800,42000,43300,44500,45800,47200,48500,49900,51400,52900,54400,55900,57500,59100,60800,62500];
+const plMid =   [61900,63800,65600,67500,69400,71400,73600,75600,77900,80200,82400,84800,87400,89900,92500,95000,97800,100500,103400,106200];
+const plCeil =  [131000,135000,139000,142900,146900,151200,155900,160200,164900,169900,174600,179600,185000,190400,195800,201200,207000,212800,218900,225000];
+
+const monthsExtended = ["Jan '25", "Feb '25", "Mar '25", "Apr '25", "May '25", "Jun '25", "Jul '25", "Aug '25", "Sep '25", "Oct '25", "Nov '25", "Dec '25", "Jan '26", "Feb '26", "Mar '26", "Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26", "Oct '26", "Nov '26", "Dec '26", "Jan '27", "Feb '27", "Mar '27", "Apr '27", "May '27", "Jun '27", "Jul '27", "Aug '27", "Sep '27", "Oct '27", "Nov '27", "Dec '27", "Jan '28", "Feb '28", "Mar '28", "Apr '28", "May '28", "Jun '28", "Jul '28", "Aug '28", "Sep '28", "Oct '28", "Nov '28", "Dec '28", "Jan '29", "Feb '29", "Mar '29", "Apr '29", "May '29", "Jun '29", "Jul '29", "Aug '29", "Sep '29", "Oct '29", "Nov '29", "Dec '29", "Jan '30", "Feb '30", "Mar '30", "Apr '30", "May '30", "Jun '30", "Jul '30", "Aug '30", "Sep '30", "Oct '30", "Nov '30", "Dec '30"];
+const btcActualExtended = [0.005154, 0.010274, 0.016248, 0.022228, 0.027148, 0.031914, 0.036183, 0.040457, 0.044807, 0.049307, 0.054577, 0.060327, 0.065557, 0.072857, 0.079856, 0.086616, 0.099286, 0.120286, 0.141858, 0.164045, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+const projectionLow = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.164045, 0.1735, 0.1826, 0.1915, 0.2002, 0.2086, 0.2167, 0.2247, 0.2324, 0.2362, 0.2398, 0.2434, 0.2468, 0.2502, 0.2535, 0.2566, 0.2597, 0.2627, 0.2656, 0.2685, 0.2712, 0.2739, 0.2765, 0.279, 0.2815, 0.2839, 0.2862, 0.2885, 0.2907, 0.2928, 0.2949, 0.2969, 0.2988, 0.3008, 0.3026, 0.3044, 0.3062, 0.3079, 0.3095, 0.3111, 0.3127, 0.3142, 0.3157, 0.3171, 0.3185, 0.3213, 0.3239, 0.3265, 0.329, 0.3314, 0.3338, 0.3361, 0.3383];
+const projectionHigh = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.164045, 0.1812, 0.1979, 0.2142, 0.23, 0.2453, 0.2602, 0.2747, 0.2889, 0.2937, 0.2985, 0.3031, 0.3076, 0.312, 0.3163, 0.3204, 0.3244, 0.3283, 0.3321, 0.3358, 0.3394, 0.3429, 0.3463, 0.3496, 0.3528, 0.3559, 0.3589, 0.3619, 0.3648, 0.3675, 0.3702, 0.3729, 0.3754, 0.3779, 0.3803, 0.3827, 0.385, 0.3872, 0.3894, 0.3915, 0.3935, 0.3955, 0.3974, 0.3993, 0.4011, 0.4061, 0.4109, 0.4156, 0.4202, 0.4246, 0.4289, 0.4331, 0.4372];
+
+let currentChart = null;
+
+const liveLinePlugin = {
+  id: 'liveLine',
+  afterDraw(chart) {
+    const x = chart.scales.x.getPixelForValue(16);
+    const {top, bottom} = chart.chartArea;
+    chart.ctx.save();
+    chart.ctx.setLineDash([4,3]);
+    chart.ctx.strokeStyle = 'rgba(247,147,26,0.35)';
+    chart.ctx.lineWidth = 1;
+    chart.ctx.beginPath();
+    chart.ctx.moveTo(x, top);
+    chart.ctx.lineTo(x, bottom);
+    chart.ctx.stroke();
+    chart.ctx.restore();
   }
-});
+};
+
+const chartDefs = {
+  accumulation: {
+    labels: monthsExtended,
+    datasets:[
+      {label:'BTC held (actual)',data:btcActualExtended,borderColor:'#F7931A',backgroundColor:'rgba(247,147,26,0.08)',borderWidth:2,fill:true,tension:0.3,pointRadius:0,yAxisID:'y',spanGaps:false},
+      {label:'Projected range - lower',data:projectionLow,borderColor:'rgba(96,165,250,0.5)',borderWidth:1,borderDash:[4,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y',spanGaps:true},
+      {label:'Projected range - upper',data:projectionHigh,borderColor:'rgba(96,165,250,0.5)',backgroundColor:'rgba(96,165,250,0.12)',borderWidth:1,borderDash:[4,3],fill:'-1',tension:0.3,pointRadius:0,yAxisID:'y',spanGaps:true}
+    ],
+    fmt: v => v.toFixed(4)+' ₿',
+    legend:[{c:'#F7931A',d:false,l:'BTC held (actual)'},{c:'rgba(96,165,250,0.7)',d:true,l:'Projected range through Dec 2030 (illustrative)'}]
+  },
+  price: {
+    datasets:[
+      {label:'BTC price',data:prices,borderColor:'#F7931A',backgroundColor:'rgba(247,147,26,0.05)',borderWidth:2,fill:true,tension:0.3,pointRadius:0,yAxisID:'y'},
+      {label:'Cost basis',data:costBasis,borderColor:'#60A5FA',borderWidth:1.5,borderDash:[5,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'}
+    ],
+    fmt: v => '$'+Math.round(v/1000)+'k',
+    legend:[{c:'#F7931A',d:false,l:'BTC price'},{c:'#60A5FA',d:true,l:'Cost basis'}]
+  },
+  powerlaw: {
+    datasets:[
+      {label:'BTC price',data:prices,borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,pointRadius:0,yAxisID:'y'},
+      {label:'Midpoint',data:plMid,borderColor:'#22C55E',borderWidth:1.5,borderDash:[5,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'},
+      {label:'Floor',data:plFloor,borderColor:'#60A5FA',borderWidth:1,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'},
+      {label:'Ceiling',data:plCeil,borderColor:'#EF4444',borderWidth:1,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'}
+    ],
+    fmt: v => '$'+Math.round(v/1000)+'k',
+    legend:[{c:'#F7931A',d:false,l:'BTC price'},{c:'#22C55E',d:true,l:'Power law midpoint'},{c:'#60A5FA',d:true,l:'Floor'},{c:'#EF4444',d:true,l:'Ceiling'}]
+  }
+};
+
+function switchChart(type, btn) {
+  document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  if(currentChart) currentChart.destroy();
+  const def = chartDefs[type];
+  currentChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
+    type:'line', plugins:[liveLinePlugin],
+    data:{labels:(def.labels || months), datasets:def.datasets},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1C1C1C',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,
+          titleColor:'#9A9490',bodyColor:'#F0EDE8',
+          titleFont:{family:'JetBrains Mono',size:10},
+          bodyFont:{family:'JetBrains Mono',size:11},
+          callbacks:{label:c=>' '+c.dataset.label+': '+def.fmt(c.parsed.y)}
+        }
+      },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#827C76',font:{family:'JetBrains Mono',size:9},maxRotation:0}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#827C76',font:{family:'JetBrains Mono',size:9},callback:def.fmt}}
+      }
+    }
+  });
+  const el = document.getElementById('chartLegend');
+  el.innerHTML = def.legend.map(i=>'<div class="legend-item"><div class="legend-line" style="background:'+i.c+';border-top:2px '+(i.d?'dashed':'solid')+' '+i.c+'"></div>'+i.l+'</div>').join('');
+}
+
+switchChart('accumulation');
+
+
+
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+},{threshold:0.08});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+function openFreeModal(){
+  document.getElementById('freeModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeFreeModal(e){
+  if(!e||e.target.id==='freeModal'||e.type!=='click'||e.currentTarget.className==='modal-close'||e.currentTarget.tagName==='BUTTON'){
+    document.getElementById('freeModal').classList.remove('open');
+    document.body.style.overflow='';
+  }
+}
+// Free signup handled by Beehiiv embed
+
+
+function copyAddr(addrId, feedbackId) {
+  const text = document.getElementById(addrId).textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const fb = document.getElementById(feedbackId);
+    fb.style.display = 'block';
+    setTimeout(() => fb.style.display = 'none', 2500);
+  }).catch(() => {
+    // Fallback for browsers without clipboard API
+    const el = document.getElementById(addrId);
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  });
+}
+
+function handleMerchNotify() {
+  const btn = document.getElementById('merch-btn');
+  const confirm = document.getElementById('merch-confirm');
+  btn.textContent = 'Noted, we will let you know';
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  confirm.textContent = 'Added to the notify list.';
+  confirm.style.display = 'inline';
+}
+
+
+function openSubModal() {
+  document.getElementById('subModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSubModal(e) {
+  if(!e || e.target.id === 'subModal' || e.currentTarget.className === 'modal-close') {
+    document.getElementById('subModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+function handleSubSignup() {
+  const name = document.getElementById('sub-name').value;
+  const email = document.getElementById('sub-email').value;
+  if(!name || !email || !email.includes('@')) {
+    if(!name) document.getElementById('sub-name').style.borderColor = 'var(--red)';
+    if(!email || !email.includes('@')) document.getElementById('sub-email').style.borderColor = 'var(--red)';
+    return;
+  }
+  document.getElementById('subFormState').style.display = 'none';
+  document.getElementById('subSuccess').style.display = 'block';
+}
+
+const HALVING_DATE=new Date('2024-04-20');
+const TODAY=new Date();
+document.getElementById('stat-cycle').textContent=Math.round((TODAY-HALVING_DATE)/86400000);
+
+// --- Dynamic halving-cycle phase (dashboard signal card) ---
+(function(){
+  const dayCount = Math.round((TODAY-HALVING_DATE)/86400000);
+  const monthCount = dayCount/30.44;
+  let phase, phaseNote;
+  if (monthCount <= 12) { phase = "Post-Halving"; phaseNote = "Supply shock phase. Historically a good long-term accumulation entry point before the bull run begins in earnest."; }
+  else if (monthCount <= 24) { phase = "Bull Run"; phaseNote = "Price appreciation phase. No Cycle Phase multiplier active in this window."; }
+  else if (monthCount <= 36) { phase = "Post-Peak Correction"; phaseNote = "Historically the second-best accumulation window of the cycle. Cycle Phase multiplier (2.0x) active."; }
+  else { phase = "Pre-Halving Run-Up"; phaseNote = "Anticipation builds toward the next halving. No Cycle Phase multiplier active in this window."; }
+  document.getElementById('signal-day').textContent = 'Day ' + dayCount;
+  document.getElementById('signal-phase-desc').textContent = phase + ' phase. Month ' + Math.floor(monthCount) + ' of the 4th cycle. ' + phaseNote + ' The operation executes on the 15th of each month. Bitcoin trades 24/7, 365 days a year. That is a feature, not a footnote.';
+
+  const NEXT_HALVING = new Date('2028-04-20');
+  const monthsToHalving = Math.round((NEXT_HALVING-TODAY)/86400000/30.44);
+  document.getElementById('signal-halving-countdown').textContent = '5th halving, ~' + monthsToHalving + ' months away. This is the next structural inflection point. The operation will document every DCA purchase, every decision, and every outside influence between now and that date.';
+})();
+
+// --- Live price, current value, and P&L (static facts updated monthly at each DCA) ---
+const BTC_HELD = 0.16404;
+const TOTAL_FIAT_DEPLOYED = 13200;
+const COINGECKO_API_KEY = ''; // paste a free CoinGecko Demo API key here once obtained
+
+async function updateLiveDashboardStats() {
+  try {
+    const hasKey = COINGECKO_API_KEY && COINGECKO_API_KEY.length > 0;
+    const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'
+      + (hasKey ? '&x_cg_demo_api_key=' + COINGECKO_API_KEY : '');
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('price fetch failed: HTTP ' + res.status);
+    const data = await res.json();
+    const price = data.bitcoin.usd;
+
+    const currentValue = BTC_HELD * price;
+    const pnl = currentValue - TOTAL_FIAT_DEPLOYED;
+    const pnlPct = (pnl / TOTAL_FIAT_DEPLOYED) * 100;
+
+    document.getElementById('live-price-tag').textContent =
+      'BTC $' + price.toLocaleString() + ' · live';
+
+    const cvEl = document.getElementById('kpi-current-value');
+    cvEl.textContent = '$' + currentValue.toLocaleString(undefined, {maximumFractionDigits: 0});
+    cvEl.classList.toggle('red', pnl < 0);
+
+    const sign = pnl >= 0 ? '+' : '\u2013';
+    document.getElementById('kpi-pnl').textContent =
+      sign + '$' + Math.abs(pnl).toLocaleString(undefined, {maximumFractionDigits: 0}) +
+      ' (' + sign + Math.abs(pnlPct).toFixed(1) + '%)';
+  } catch (e) {
+    document.getElementById('live-price-tag').textContent = 'BTC price unavailable';
+    document.getElementById('kpi-current-value').textContent = 'unavailable';
+    document.getElementById('kpi-pnl').textContent = '\u2013';
+    console.error('Live dashboard price fetch failed:', e);
+  }
+}
+
+updateLiveDashboardStats();
+setInterval(updateLiveDashboardStats, 5 * 60 * 1000);
 </script>
 </body>
 </html>
