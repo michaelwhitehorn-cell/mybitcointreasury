@@ -1671,8 +1671,8 @@ section.full { max-width: none; padding: 0; }
           </div>
           <div class="hero-stat">
             <div class="hero-stat-label">DCA signal</div>
-            <div class="hero-stat-value btc">2.8×</div>
-            <div class="hero-stat-sub">strong accumulate</div>
+            <div class="hero-stat-value btc" id="stat-multiplier">–</div>
+            <div class="hero-stat-sub" id="stat-multiplier-sub">loading…</div>
           </div>
           <div class="hero-stat">
             <div class="hero-stat-label">Cycle day</div>
@@ -2367,9 +2367,44 @@ const months = ["Jan '25","Feb '25","Mar '25","Apr '25","May '25","Jun '25","Jul
 const prices = [97000,97500,83700,83600,101700,104900,117400,117000,114900,111000,94800,87000,95600,68500,71500,74000,78900,66500,64900,63100];
 const btcActual = [0.005154,0.010274,0.016248,0.022228,0.027148,0.031914,0.036183,0.040457,0.044807,0.049307,0.054577,0.060327,0.065557,0.072857,0.079856,0.086616,0.099286,0.120286,0.141858,0.164045];
 const costBasis = [97012,97333,92319,89977,92088,94003,96731,98870,100431,101405,100775,99458,99150,96079,93919,92362,90647,86461,83182,80466];
-const plFloor = [36400,37500,38600,39700,40800,42000,43300,44500,45800,47200,48500,49900,51400,52900,54400,55900,57500,59100,60800,62500];
-const plMid =   [61900,63800,65600,67500,69400,71400,73600,75600,77900,80200,82400,84800,87400,89900,92500,95000,97800,100500,103400,106200];
 const plCeil =  [131000,135000,139000,142900,146900,151200,155900,160200,164900,169900,174600,179600,185000,190400,195800,201200,207000,212800,218900,225000];
+
+// --- Power law floor and midpoint, computed from the validated formula rather than
+// static/interpolated estimates. Genuinely self-updating for any date. ---
+const GENESIS_BLOCK = new Date('2009-01-03');
+const PL_A = Math.pow(10, -17.016);
+const PL_N = 5.845;
+const PL_FLOOR_RATIO = 0.3558; // validated across 5 anchor points spanning 2022-2028
+
+function calculatePowerLawMidpoint(date) {
+  const daysSinceGenesis = Math.round((date - GENESIS_BLOCK) / 86400000);
+  return PL_A * Math.pow(daysSinceGenesis, PL_N);
+}
+function calculatePowerLawFloor(date) {
+  return calculatePowerLawMidpoint(date) * PL_FLOOR_RATIO;
+}
+
+// One date per chart month (15th, matching the DCA schedule) - Jan 2025 through Dec 2030
+const chartMonthDates = [];
+for (let y = 2025; y <= 2030; y++) {
+  for (let m = 0; m < 12; m++) {
+    if (y === 2025 && m < 0) continue;
+    chartMonthDates.push(new Date(y, m, 15));
+  }
+}
+
+const plFloor = chartMonthDates.slice(0, 20).map(d => Math.round(calculatePowerLawFloor(d)));
+const plMid = chartMonthDates.slice(0, 20).map(d => Math.round(calculatePowerLawMidpoint(d)));
+
+// One extra "live" point appended to the historical series, representing today rather
+// than a completed calendar month. Price starts null and is filled in once the live
+// fetch resolves; floor/midpoint are pure date math so compute immediately.
+months.push('Now');
+prices.push(null);
+costBasis.push(costBasis[costBasis.length - 1]); // static fact, unchanged since last DCA
+plFloor.push(Math.round(calculatePowerLawFloor(new Date())));
+plMid.push(Math.round(calculatePowerLawMidpoint(new Date())));
+plCeil.push(Math.round(plCeil[plCeil.length - 1] * (plCeil[plCeil.length - 1] / plCeil[plCeil.length - 2])));
 
 const monthsExtended = ["Jan '25", "Feb '25", "Mar '25", "Apr '25", "May '25", "Jun '25", "Jul '25", "Aug '25", "Sep '25", "Oct '25", "Nov '25", "Dec '25", "Jan '26", "Feb '26", "Mar '26", "Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26", "Oct '26", "Nov '26", "Dec '26", "Jan '27", "Feb '27", "Mar '27", "Apr '27", "May '27", "Jun '27", "Jul '27", "Aug '27", "Sep '27", "Oct '27", "Nov '27", "Dec '27", "Jan '28", "Feb '28", "Mar '28", "Apr '28", "May '28", "Jun '28", "Jul '28", "Aug '28", "Sep '28", "Oct '28", "Nov '28", "Dec '28", "Jan '29", "Feb '29", "Mar '29", "Apr '29", "May '29", "Jun '29", "Jul '29", "Aug '29", "Sep '29", "Oct '29", "Nov '29", "Dec '29", "Jan '30", "Feb '30", "Mar '30", "Apr '30", "May '30", "Jun '30", "Jul '30", "Aug '30", "Sep '30", "Oct '30", "Nov '30", "Dec '30"];
 const btcActualExtended = [0.005154, 0.010274, 0.016248, 0.022228, 0.027148, 0.031914, 0.036183, 0.040457, 0.044807, 0.049307, 0.054577, 0.060327, 0.065557, 0.072857, 0.079856, 0.086616, 0.099286, 0.120286, 0.141858, 0.164045, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
@@ -2377,6 +2412,7 @@ const projectionLow = [null, null, null, null, null, null, null, null, null, nul
 const projectionHigh = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.164045, 0.1812, 0.1979, 0.2142, 0.23, 0.2453, 0.2602, 0.2747, 0.2889, 0.2937, 0.2985, 0.3031, 0.3076, 0.312, 0.3163, 0.3204, 0.3244, 0.3283, 0.3321, 0.3358, 0.3394, 0.3429, 0.3463, 0.3496, 0.3528, 0.3559, 0.3589, 0.3619, 0.3648, 0.3675, 0.3702, 0.3729, 0.3754, 0.3779, 0.3803, 0.3827, 0.385, 0.3872, 0.3894, 0.3915, 0.3935, 0.3955, 0.3974, 0.3993, 0.4011, 0.4061, 0.4109, 0.4156, 0.4202, 0.4246, 0.4289, 0.4331, 0.4372];
 
 let currentChart = null;
+let currentChartType = null;
 
 const liveLinePlugin = {
   id: 'liveLine',
@@ -2430,6 +2466,7 @@ function switchChart(type, btn) {
   document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
   if(btn) btn.classList.add('active');
   if(currentChart) currentChart.destroy();
+  currentChartType = type;
   const def = chartDefs[type];
   currentChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
     type:'line', plugins:[liveLinePlugin],
@@ -2566,18 +2603,6 @@ document.getElementById('stat-cycle').textContent=Math.round((TODAY-HALVING_DATE
   document.getElementById('signal-halving-countdown').textContent = '5th halving, ~' + monthsToHalving + ' months away. This is the next structural inflection point. The operation will document every DCA purchase, every decision, and every outside influence between now and that date.';
 })();
 
-// --- Live power law floor (derived formula, validated across 5 points spanning 2022-2028) ---
-const GENESIS_BLOCK = new Date('2009-01-03');
-const PL_A = Math.pow(10, -17.016);
-const PL_N = 5.845;
-const PL_FLOOR_RATIO = 0.3558; // average of 5 confirmed floor/midpoint ratios, range 35.52%-35.63%
-
-function calculatePowerLawFloor(date) {
-  const daysSinceGenesis = Math.round((date - GENESIS_BLOCK) / 86400000);
-  const midpoint = PL_A * Math.pow(daysSinceGenesis, PL_N);
-  return midpoint * PL_FLOOR_RATIO;
-}
-
 // Cycle Phase: Post-Peak Correction, confirmed active through April 2027 regardless of price
 const CYCLE_PHASE_ACTIVE = true;
 const CYCLE_PHASE_END = new Date('2027-04-20');
@@ -2596,6 +2621,14 @@ async function updateLiveDashboardStats() {
     if (!res.ok) throw new Error('price fetch failed: HTTP ' + res.status);
     const data = await res.json();
     const price = data.bitcoin.usd;
+
+    // Fill in the live "Now" point on the shared price array, and refresh
+    // whichever chart is currently on screen if it uses that data
+    prices[prices.length - 1] = price;
+    if (currentChart && (currentChartType === 'price' || currentChartType === 'powerlaw')) {
+      currentChart.data.labels = months;
+      currentChart.update('none');
+    }
 
     const currentValue = BTC_HELD * price;
     const pnl = currentValue - TOTAL_FIAT_DEPLOYED;
@@ -2639,6 +2672,14 @@ async function updateLiveDashboardStats() {
     const multDescEl = document.getElementById('signal-multiplier-desc');
     multEl.textContent = totalMultiplier.toFixed(1) + '×';
 
+    // Hero stat mirrors the same live calculation - no separate source of truth
+    document.getElementById('stat-multiplier').textContent = totalMultiplier.toFixed(1) + '×';
+    document.getElementById('stat-multiplier-sub').textContent =
+      floorZoneActive && cyclePhaseActive ? 'both triggers active'
+      : cyclePhaseActive ? 'cycle phase only'
+      : floorZoneActive ? 'floor zone only'
+      : 'base rate';
+
     let descParts = [];
     if (cyclePhaseActive) descParts.push('Cycle phase (2.0×, active through Apr 2027)');
     if (floorZoneActive) descParts.push('power law floor-zone adjustment (+0.8×, price ' + pctAboveFloor.toFixed(1) + '% above the calculated floor)');
@@ -2659,6 +2700,8 @@ async function updateLiveDashboardStats() {
     document.getElementById('kpi-plzone-sub').textContent = '\u2013';
     document.getElementById('signal-multiplier-value').textContent = '\u2013';
     document.getElementById('signal-multiplier-desc').textContent = 'Live power law data unavailable.';
+    document.getElementById('stat-multiplier').textContent = '\u2013';
+    document.getElementById('stat-multiplier-sub').textContent = 'unavailable';
     console.error('Live dashboard price fetch failed:', e);
   }
 }
