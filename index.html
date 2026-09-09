@@ -1900,8 +1900,8 @@ section.full { max-width: none; padding: 0; }
     </div>
     <div class="kpi">
       <div class="kpi-label">Power law zone</div>
-      <div class="kpi-value" style="color:var(--btc);font-size:15px;">Floor zone</div>
-      <div class="kpi-sub">within 8% as of 15 Aug</div>
+      <div class="kpi-value" id="kpi-plzone" style="color:var(--btc);font-size:15px;">loading…</div>
+      <div class="kpi-sub" id="kpi-plzone-sub">–</div>
     </div>
   </div>
 
@@ -1932,8 +1932,8 @@ section.full { max-width: none; padding: 0; }
     </div>
     <div class="signal-card" style="border-color:var(--btc-line);">
       <div class="signal-title">DCA signal multiplier</div>
-      <div class="signal-value" style="color:var(--btc);">2.8×</div>
-      <div class="signal-desc">Cycle phase (2.0×) + power law floor-zone adjustment (+0.8×) × moderate profile (1.0×). Price is within 8% of the calculated power law floor — a condition the framework weights more heavily than the standard lower-zone adjustment. Base DCA of $500 scales to $1,400 while both conditions hold.</div>
+      <div class="signal-value" id="signal-multiplier-value" style="color:var(--btc);">–</div>
+      <div class="signal-desc" id="signal-multiplier-desc">Loading current power law position…</div>
     </div>
     <div class="signal-card">
       <div class="signal-title">Next key milestone</div>
@@ -2566,6 +2566,22 @@ document.getElementById('stat-cycle').textContent=Math.round((TODAY-HALVING_DATE
   document.getElementById('signal-halving-countdown').textContent = '5th halving, ~' + monthsToHalving + ' months away. This is the next structural inflection point. The operation will document every DCA purchase, every decision, and every outside influence between now and that date.';
 })();
 
+// --- Live power law floor (derived formula, validated across 5 points spanning 2022-2028) ---
+const GENESIS_BLOCK = new Date('2009-01-03');
+const PL_A = Math.pow(10, -17.016);
+const PL_N = 5.845;
+const PL_FLOOR_RATIO = 0.3558; // average of 5 confirmed floor/midpoint ratios, range 35.52%-35.63%
+
+function calculatePowerLawFloor(date) {
+  const daysSinceGenesis = Math.round((date - GENESIS_BLOCK) / 86400000);
+  const midpoint = PL_A * Math.pow(daysSinceGenesis, PL_N);
+  return midpoint * PL_FLOOR_RATIO;
+}
+
+// Cycle Phase: Post-Peak Correction, confirmed active through April 2027 regardless of price
+const CYCLE_PHASE_ACTIVE = true;
+const CYCLE_PHASE_END = new Date('2027-04-20');
+
 // --- Live price, current value, and P&L (static facts updated monthly at each DCA) ---
 const BTC_HELD = 0.16404;
 const TOTAL_FIAT_DEPLOYED = 13200;
@@ -2596,10 +2612,53 @@ async function updateLiveDashboardStats() {
     document.getElementById('kpi-pnl').textContent =
       sign + '$' + Math.abs(pnl).toLocaleString(undefined, {maximumFractionDigits: 0}) +
       ' (' + sign + Math.abs(pnlPct).toFixed(1) + '%)';
+
+    // --- Live power law floor-zone status ---
+    const today = new Date();
+    const floor = calculatePowerLawFloor(today);
+    const pctAboveFloor = (price / floor - 1) * 100;
+    const floorZoneActive = pctAboveFloor <= 8;
+
+    const cyclePhaseActive = today <= CYCLE_PHASE_END;
+    let totalMultiplier = 1.0;
+    if (cyclePhaseActive) totalMultiplier += 1.0;
+    if (floorZoneActive) totalMultiplier += 0.8;
+    const dcaAmount = 500 * totalMultiplier;
+
+    const plzoneEl = document.getElementById('kpi-plzone');
+    const plzoneSubEl = document.getElementById('kpi-plzone-sub');
+    if (floorZoneActive) {
+      plzoneEl.textContent = 'Floor zone';
+      plzoneSubEl.textContent = 'within 8% (' + pctAboveFloor.toFixed(1) + '% above)';
+    } else {
+      plzoneEl.textContent = 'Clear of floor';
+      plzoneSubEl.textContent = pctAboveFloor.toFixed(1) + '% above calculated floor';
+    }
+
+    const multEl = document.getElementById('signal-multiplier-value');
+    const multDescEl = document.getElementById('signal-multiplier-desc');
+    multEl.textContent = totalMultiplier.toFixed(1) + '×';
+
+    let descParts = [];
+    if (cyclePhaseActive) descParts.push('Cycle phase (2.0×, active through Apr 2027)');
+    if (floorZoneActive) descParts.push('power law floor-zone adjustment (+0.8×, price ' + pctAboveFloor.toFixed(1) + '% above the calculated floor)');
+    let descText;
+    if (cyclePhaseActive && floorZoneActive) {
+      descText = descParts.join(' + ') + ' × moderate profile (1.0×). Base DCA of $500 scales to $' + dcaAmount.toLocaleString() + ' while both conditions hold.';
+    } else if (cyclePhaseActive) {
+      descText = descParts[0] + ' × moderate profile (1.0×). Price is ' + pctAboveFloor.toFixed(1) + '% above the calculated power law floor, outside the 8% trigger band. Base DCA of $500 scales to $' + dcaAmount.toLocaleString() + '.';
+    } else {
+      descText = 'Neither trigger is currently active. Base DCA of $500 applies at standard rate.';
+    }
+    multDescEl.textContent = descText;
   } catch (e) {
     document.getElementById('live-price-tag').textContent = 'BTC price unavailable';
     document.getElementById('kpi-current-value').textContent = 'unavailable';
     document.getElementById('kpi-pnl').textContent = '\u2013';
+    document.getElementById('kpi-plzone').textContent = 'unavailable';
+    document.getElementById('kpi-plzone-sub').textContent = '\u2013';
+    document.getElementById('signal-multiplier-value').textContent = '\u2013';
+    document.getElementById('signal-multiplier-desc').textContent = 'Live power law data unavailable.';
     console.error('Live dashboard price fetch failed:', e);
   }
 }
