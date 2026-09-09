@@ -661,12 +661,12 @@ section.full { max-width: none; padding: 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  max-width: 760px;
+  max-width: 900px;
 }
 
 .hero-stat {
   background: var(--surface);
-  padding: 20px 24px;
+  padding: 28px 28px;
 }
 .hero-stat-label {
   font-size: 10px;
@@ -678,7 +678,7 @@ section.full { max-width: none; padding: 0; }
 }
 .hero-stat-value {
   font-family: var(--font-mono);
-  font-size: 20px;
+  font-size: 27px;
   font-weight: 500;
   color: var(--text);
   line-height: 1;
@@ -926,18 +926,18 @@ section.full { max-width: none; padding: 0; }
 }
 .chart-tab {
   font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text3);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
   background: none;
-  border: 1px solid transparent;
-  padding: 5px 12px;
+  border: 1px solid var(--border);
+  padding: 6px 14px;
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.15s;
   letter-spacing: 0.03em;
 }
-.chart-tab:hover { color: var(--text2); border-color: var(--border); }
+.chart-tab:hover { color: var(--text); border-color: var(--text3); }
 .chart-tab.active {
   color: var(--btc);
   border-color: var(--btc-line);
@@ -1634,7 +1634,7 @@ section.full { max-width: none; padding: 0; }
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-inner">
-    <div style="display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;">
+    <div style="max-width:900px;">
       <div>
         <div class="hero-kicker">
           <span class="live-dot"></span>
@@ -1683,34 +1683,6 @@ section.full { max-width: none; padding: 0; }
         <div class="scroll-hint">
           <i class="ti ti-arrow-down"></i>
           Scroll to explore the operation
-        </div>
-      </div>
-      <div class="hero-loop-diagram" aria-label="The Sovereign Wealth Stack: Acquisition and Self-Custody, Treasury Actions, Real World">
-        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--btc);margin-bottom:1.5rem;opacity:0.8;">The Sovereign Wealth Stack</div>
-        <div class="hero-loop-nodes">
-          <div class="hero-loop-node active">
-            <i class="ti ti-cpu" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;"></i>
-            <div class="hero-loop-title">Acquisition + custody</div>
-          </div>
-          <div class="hero-loop-connector"><i class="ti ti-arrow-down" style="color:var(--btc);opacity:0.4;font-size:16px;"></i></div>
-          <div class="hero-loop-node">
-            <i class="ti ti-building" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;opacity:0.8;"></i>
-            <div class="hero-loop-title">Treasury actions</div>
-          </div>
-          <div class="hero-loop-connector"><i class="ti ti-arrow-down" style="color:var(--btc);opacity:0.4;font-size:16px;"></i></div>
-          <div class="hero-loop-node">
-            <i class="ti ti-coin" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;opacity:0.6;"></i>
-            
-          </div>
-          <div class="hero-loop-connector"><i class="ti ti-arrow-down" style="color:var(--btc);opacity:0.4;font-size:16px;"></i></div>
-          <div class="hero-loop-node">
-            <i class="ti ti-credit-card" style="font-size:22px;color:var(--btc);display:block;margin-bottom:10px;opacity:0.5;"></i>
-            <div class="hero-loop-title">Real world</div>
-          </div>
-          <div class="hero-loop-connector" style="position:relative;">
-            <div style="width:2px;height:20px;background:linear-gradient(to bottom,rgba(247,147,26,0.3),transparent);margin:0 auto;"></div>
-            <div style="font-family:var(--font-mono);font-size:9px;color:var(--btc);opacity:0.5;text-align:center;letter-spacing:0.1em;margin-top:4px;">build the stack</div>
-          </div>
         </div>
       </div>
     </div>
@@ -1920,7 +1892,7 @@ section.full { max-width: none; padding: 0; }
       <span style="font-size:10px;color:var(--text3);margin-left:8px;">Backtest history: Jan 2025 → May 2026 · Live operation: Jun 2026 →</span>
     </div>
     <div class="chart-legend" id="chartLegend"></div>
-    <div style="margin-top:6px;font-size:11px;color:var(--text3);line-height:1.6;">On the BTC accumulation tab, the shaded region shows a projected range through Dec 2030, derived from the DCA framework's own rules (known future halving-cycle phase timing, no guessing) and the power law corridor already shown on the Power Law tab (lower zone to midpoint, not a single price forecast). Illustrative only — not a prediction, and not revised once published.</div>
+    <div id="chart-tab-caption" style="margin-top:6px;font-size:11px;color:var(--text3);line-height:1.6;">Real BTC held over time, plus a shaded projected range through 2030 — derived from the DCA framework's own rules and the power law corridor shown on the Power Law tab, not a single price forecast. Illustrative only, not revised once published.</div>
     <div style="margin-top:10px;font-size:11px;color:var(--text3);">Live power law reference: <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank" style="color:var(--btc);text-decoration:none;">mNAV · Bitcoin power law chart</a></div>
   </div>
 
@@ -2462,11 +2434,19 @@ const chartDefs = {
   }
 };
 
+const chartCaptions = {
+  accumulation: "Real BTC held over time, plus a shaded projected range through 2030 — derived from the DCA framework's own rules and the power law corridor shown on the Power Law tab, not a single price forecast. Illustrative only, not revised once published.",
+  price: "What was actually paid per BTC on each purchase, tracked against the running average cost basis over time.",
+  powerlaw: "Where price sits against the calculated power law floor, midpoint, and ceiling — the same corridor the DCA multiplier reacts to."
+};
+
 function switchChart(type, btn) {
   document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
   if(btn) btn.classList.add('active');
   if(currentChart) currentChart.destroy();
   currentChartType = type;
+  const captionEl = document.getElementById('chart-tab-caption');
+  if (captionEl) captionEl.textContent = chartCaptions[type] || '';
   const def = chartDefs[type];
   currentChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
     type:'line', plugins:[liveLinePlugin],
