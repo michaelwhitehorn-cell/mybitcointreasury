@@ -1671,8 +1671,8 @@ section.full { max-width: none; padding: 0; }
           </div>
           <div class="hero-stat">
             <div class="hero-stat-label">DCA signal</div>
-            <div class="hero-stat-value btc">2.8×</div>
-            <div class="hero-stat-sub">strong accumulate</div>
+            <div class="hero-stat-value btc" id="stat-multiplier">–</div>
+            <div class="hero-stat-sub" id="stat-multiplier-sub">loading…</div>
           </div>
           <div class="hero-stat">
             <div class="hero-stat-label">Cycle day</div>
@@ -2396,12 +2396,23 @@ for (let y = 2025; y <= 2030; y++) {
 const plFloor = chartMonthDates.slice(0, 20).map(d => Math.round(calculatePowerLawFloor(d)));
 const plMid = chartMonthDates.slice(0, 20).map(d => Math.round(calculatePowerLawMidpoint(d)));
 
+// One extra "live" point appended to the historical series, representing today rather
+// than a completed calendar month. Price starts null and is filled in once the live
+// fetch resolves; floor/midpoint are pure date math so compute immediately.
+months.push('Now');
+prices.push(null);
+costBasis.push(costBasis[costBasis.length - 1]); // static fact, unchanged since last DCA
+plFloor.push(Math.round(calculatePowerLawFloor(new Date())));
+plMid.push(Math.round(calculatePowerLawMidpoint(new Date())));
+plCeil.push(Math.round(plCeil[plCeil.length - 1] * (plCeil[plCeil.length - 1] / plCeil[plCeil.length - 2])));
+
 const monthsExtended = ["Jan '25", "Feb '25", "Mar '25", "Apr '25", "May '25", "Jun '25", "Jul '25", "Aug '25", "Sep '25", "Oct '25", "Nov '25", "Dec '25", "Jan '26", "Feb '26", "Mar '26", "Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26", "Oct '26", "Nov '26", "Dec '26", "Jan '27", "Feb '27", "Mar '27", "Apr '27", "May '27", "Jun '27", "Jul '27", "Aug '27", "Sep '27", "Oct '27", "Nov '27", "Dec '27", "Jan '28", "Feb '28", "Mar '28", "Apr '28", "May '28", "Jun '28", "Jul '28", "Aug '28", "Sep '28", "Oct '28", "Nov '28", "Dec '28", "Jan '29", "Feb '29", "Mar '29", "Apr '29", "May '29", "Jun '29", "Jul '29", "Aug '29", "Sep '29", "Oct '29", "Nov '29", "Dec '29", "Jan '30", "Feb '30", "Mar '30", "Apr '30", "May '30", "Jun '30", "Jul '30", "Aug '30", "Sep '30", "Oct '30", "Nov '30", "Dec '30"];
 const btcActualExtended = [0.005154, 0.010274, 0.016248, 0.022228, 0.027148, 0.031914, 0.036183, 0.040457, 0.044807, 0.049307, 0.054577, 0.060327, 0.065557, 0.072857, 0.079856, 0.086616, 0.099286, 0.120286, 0.141858, 0.164045, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
 const projectionLow = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.164045, 0.1735, 0.1826, 0.1915, 0.2002, 0.2086, 0.2167, 0.2247, 0.2324, 0.2362, 0.2398, 0.2434, 0.2468, 0.2502, 0.2535, 0.2566, 0.2597, 0.2627, 0.2656, 0.2685, 0.2712, 0.2739, 0.2765, 0.279, 0.2815, 0.2839, 0.2862, 0.2885, 0.2907, 0.2928, 0.2949, 0.2969, 0.2988, 0.3008, 0.3026, 0.3044, 0.3062, 0.3079, 0.3095, 0.3111, 0.3127, 0.3142, 0.3157, 0.3171, 0.3185, 0.3213, 0.3239, 0.3265, 0.329, 0.3314, 0.3338, 0.3361, 0.3383];
 const projectionHigh = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.164045, 0.1812, 0.1979, 0.2142, 0.23, 0.2453, 0.2602, 0.2747, 0.2889, 0.2937, 0.2985, 0.3031, 0.3076, 0.312, 0.3163, 0.3204, 0.3244, 0.3283, 0.3321, 0.3358, 0.3394, 0.3429, 0.3463, 0.3496, 0.3528, 0.3559, 0.3589, 0.3619, 0.3648, 0.3675, 0.3702, 0.3729, 0.3754, 0.3779, 0.3803, 0.3827, 0.385, 0.3872, 0.3894, 0.3915, 0.3935, 0.3955, 0.3974, 0.3993, 0.4011, 0.4061, 0.4109, 0.4156, 0.4202, 0.4246, 0.4289, 0.4331, 0.4372];
 
 let currentChart = null;
+let currentChartType = null;
 
 const liveLinePlugin = {
   id: 'liveLine',
@@ -2455,6 +2466,7 @@ function switchChart(type, btn) {
   document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
   if(btn) btn.classList.add('active');
   if(currentChart) currentChart.destroy();
+  currentChartType = type;
   const def = chartDefs[type];
   currentChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
     type:'line', plugins:[liveLinePlugin],
@@ -2610,6 +2622,14 @@ async function updateLiveDashboardStats() {
     const data = await res.json();
     const price = data.bitcoin.usd;
 
+    // Fill in the live "Now" point on the shared price array, and refresh
+    // whichever chart is currently on screen if it uses that data
+    prices[prices.length - 1] = price;
+    if (currentChart && (currentChartType === 'price' || currentChartType === 'powerlaw')) {
+      currentChart.data.labels = months;
+      currentChart.update('none');
+    }
+
     const currentValue = BTC_HELD * price;
     const pnl = currentValue - TOTAL_FIAT_DEPLOYED;
     const pnlPct = (pnl / TOTAL_FIAT_DEPLOYED) * 100;
@@ -2652,6 +2672,14 @@ async function updateLiveDashboardStats() {
     const multDescEl = document.getElementById('signal-multiplier-desc');
     multEl.textContent = totalMultiplier.toFixed(1) + '×';
 
+    // Hero stat mirrors the same live calculation - no separate source of truth
+    document.getElementById('stat-multiplier').textContent = totalMultiplier.toFixed(1) + '×';
+    document.getElementById('stat-multiplier-sub').textContent =
+      floorZoneActive && cyclePhaseActive ? 'both triggers active'
+      : cyclePhaseActive ? 'cycle phase only'
+      : floorZoneActive ? 'floor zone only'
+      : 'base rate';
+
     let descParts = [];
     if (cyclePhaseActive) descParts.push('Cycle phase (2.0×, active through Apr 2027)');
     if (floorZoneActive) descParts.push('power law floor-zone adjustment (+0.8×, price ' + pctAboveFloor.toFixed(1) + '% above the calculated floor)');
@@ -2672,6 +2700,8 @@ async function updateLiveDashboardStats() {
     document.getElementById('kpi-plzone-sub').textContent = '\u2013';
     document.getElementById('signal-multiplier-value').textContent = '\u2013';
     document.getElementById('signal-multiplier-desc').textContent = 'Live power law data unavailable.';
+    document.getElementById('stat-multiplier').textContent = '\u2013';
+    document.getElementById('stat-multiplier-sub').textContent = 'unavailable';
     console.error('Live dashboard price fetch failed:', e);
   }
 }
