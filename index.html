@@ -1541,6 +1541,37 @@ section.full { max-width: none; padding: 0; }
 }
 
 /* SCROLL indicator */
+.hero-latest-callout {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 1.5rem;
+  padding: 14px 20px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  max-width: 900px;
+  transition: border-color 0.2s;
+}
+.hero-latest-callout:hover { border-color: var(--btc-line); }
+.hero-latest-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--btc);
+  background: var(--btc-glow);
+  padding: 4px 10px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.hero-latest-text { color: var(--text2); font-size: 14px; flex: 1; }
+.hero-latest-cta { color: var(--btc); font-size: 13px; font-weight: 600; white-space: nowrap; }
+@media (max-width: 768px) {
+  .hero-latest-callout { flex-wrap: wrap; }
+  .hero-latest-text { font-size: 13px; flex-basis: 100%; order: 3; margin-top: 4px; }
+}
+
 .scroll-hint {
   display: flex;
   align-items: center;
@@ -1680,6 +1711,11 @@ section.full { max-width: none; padding: 0; }
             <div class="hero-stat-sub">post Apr 2024 halving</div>
           </div>
         </div>
+        <a href="#newsletter" class="hero-latest-callout">
+          <span class="hero-latest-badge">LATEST</span>
+          <span class="hero-latest-text">Issue 06: Strategy resumes buying as another treasury company is forced to sell — plus the debasement trade, Jackson Hole, and Trump's ultimatum to the Fed</span>
+          <span class="hero-latest-cta">Read the issue →</span>
+        </a>
         <div class="scroll-hint">
           <i class="ti ti-arrow-down"></i>
           Scroll to explore the operation
@@ -2072,23 +2108,23 @@ section.full { max-width: none; padding: 0; }
   </div>
 
   <div class="newsletter-preview fade-up">
-    <div class="preview-header">The Fortnightly · Issue 05</div>
-    <div class="preview-meta">Week ending 22 August 2026 · Bitcoin treasury operations · mybitcointreasury.finance</div>
+    <div class="preview-header">The Fortnightly · Issue 06</div>
+    <div class="preview-meta">Week ending 5 September 2026 · Bitcoin treasury operations · mybitcointreasury.finance</div>
     <div class="preview-section">
       <div class="preview-section-label">Strategy actions</div>
-      <div class="preview-section-body">On 15 August the scheduled DCA purchase executed as planned: <strong>$1,400 deployed at $63,100</strong> — the third consecutive month at the elevated 2.8x tier. The calculated power law floor sat at $62,492, just 0.97% below spot, keeping price inside the 8% floor-zone band. The framework has no mechanism for fatigue. It only sizes according to the zone that prevails on the day.</div>
+      <div class="preview-section-body">No scheduled DCA fell within this period — the next execution, 15 September, will be covered in Issue 07. Worth noting now: price has moved clear of the 8% power law floor band for the first time since May, sitting 27.3% above the calculated floor. The floor-zone adjustment is not active, but the Post-Peak Correction Cycle Phase multiplier (2.0×) remains active as a calendar trigger regardless — the 15 September execution is on track to run at 2.0× alone, the first month since May with only one of the two triggers active.</div>
     </div>
     <div class="preview-section">
       <div class="preview-section-label">Bitcoin conditions</div>
-      <div class="preview-section-body">The significance of this period lies in what happened <em>after</em> the 15 August purchase. Within days, price expanded sharply — a move of roughly 20% in 72 hours, the strongest multi-day advance in months, taking Bitcoin back above the 200-day moving average for the first time since November 2025. The capital deployed at $63,100 participated fully in that expansion.</div>
+      <div class="preview-section-body">A strong recovery period: price opened near $77,000 and peaked around $82,000 by 3 September, encountering resistance not seen since the April-May run faltered. August — historically one of Bitcoin's weakest months — delivered a gain of roughly 25%, its best performance for that month since 2017, with price holding solidly above the 200-day moving average throughout.</div>
     </div>
     <div class="preview-section preview-blurred">
       <div class="preview-section-label">Global macro influences</div>
-      <div class="preview-section-body">Three developments arrived in close succession: an expanded US Treasury bond buyback programme, a White House meeting with crypto industry executives urging passage of the CLARITY Act, and the strongest weekly Bitcoin ETF inflows since October — combined with a large short squeeze as bearish positioning unwound.</div>
+      <div class="preview-section-body">Strategy resumed buying after a 10-week pause while Nakamoto Holdings was forced to sell — the same capital-structure mechanism in opposite directions. Separately, a Treasury buyback expansion, a fresh M2 record, and Bitcoin's highest gold-correlation reading since 2020 point the same way, alongside a hawkish Fed, a blowout jobs report, and an unprecedented presidential ultimatum to the Fed chair.</div>
     </div>
     <div class="preview-section preview-blurred">
       <div class="preview-section-label">Cycle context and forward watch</div>
-      <div class="preview-section-body">Three consecutive elevated purchases now, and the capital deployed at those levels has participated in the sharp expansion that followed. The reclaim of the 200-day moving average after roughly 270 sessions below it is a genuine change in market structure. Whether price can hold the line as support, rather than merely touch it, is the next data point the operation is watching.</div>
+      <div class="preview-section-body">Three genuinely significant events now converge on the same 48 hours: this operation's next DCA execution, the first Senate procedural vote on the CLARITY Act, and the FOMC's rate decision — all landing 15-16 September. Issue 07 will report what actually happened on each, not what was expected going in.</div>
     </div>
     <div class="preview-unlock">
       <span style="color:var(--text3);font-size:12px;">Macro and cycle sections available to subscribers.</span>
