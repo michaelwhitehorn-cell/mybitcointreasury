@@ -635,7 +635,7 @@ section.full { max-width: none; padding: 0; }
 }
 .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
-.btn-secondary {
+.btn-secondary, .btn-ghost {
   background: transparent;
   color: var(--text);
   padding: 14px 28px;
@@ -651,7 +651,7 @@ section.full { max-width: none; padding: 0; }
   align-items: center;
   gap: 8px;
 }
-.btn-secondary:hover { border-color: var(--btc-line); color: var(--btc); }
+.btn-secondary:hover, .btn-ghost:hover { border-color: var(--btc-line); color: var(--btc); }
 
 .hero-stats {
   display: grid;
@@ -945,6 +945,19 @@ section.full { max-width: none; padding: 0; }
 }
 
 .chart-wrap { position: relative; height: 280px; }
+.chart-unavailable {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius);
+}
+#charts, #cycle-phase, #pathway { scroll-margin-top: 80px; }
 
 .chart-legend {
   display: flex;
@@ -966,7 +979,7 @@ section.full { max-width: none; padding: 0; }
   flex-shrink: 0;
 }
 .legend-line {
-  width: 16px; height: 2px;
+  width: 16px; height: 0;
   flex-shrink: 0;
 }
 
@@ -1654,8 +1667,8 @@ section.full { max-width: none; padding: 0; }
     <li><a href="#dashboard">Dashboard</a></li>
     <li><a href="#log">Decision log</a></li>
     <li><a href="#newsletter">Newsletter</a></li>
-    <li><a href="#dashboard">Towards 2030</a></li>
-    <li><a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener" class="nav-cta-secondary">Get the manual</a></li>
+    <li><a href="#charts" data-chart-tab="accumulation">Towards 2030</a></li>
+    <li><a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="nav-cta-secondary">Get the manual</a></li>
     <li><a href="javascript:void(0)" onclick="openSubModal()" class="nav-cta">Become a founding member</a></li>
   </ul>
 </nav>
@@ -1680,7 +1693,7 @@ section.full { max-width: none; padding: 0; }
           One operator. One Bitcoin treasury. Every decision recorded in full, with complete reasoning, from January 2025 through to 2030. The institutional treasury playbook made transparent for individuals.
         </p>
         <div class="hero-ctas">
-          <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener" class="btn-primary">
+          <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-primary">
             <i class="ti ti-book"></i>
             Get the operators manual free
           </a>
@@ -1913,11 +1926,11 @@ section.full { max-width: none; padding: 0; }
     </div>
   </div>
 
-  <div class="chart-panel fade-up">
+  <div class="chart-panel fade-up" id="charts">
     <div class="chart-tabs">
-      <button class="chart-tab active" onclick="switchChart('accumulation',this)">BTC accumulation</button>
-      <button class="chart-tab" onclick="switchChart('price',this)">Price vs cost basis</button>
-      <button class="chart-tab" onclick="switchChart('powerlaw',this)">Power law position</button>
+      <button class="chart-tab active" data-chart="accumulation" onclick="switchChart('accumulation',this)">BTC accumulation</button>
+      <button class="chart-tab" data-chart="price" onclick="switchChart('price',this)">Price vs cost basis</button>
+      <button class="chart-tab" data-chart="powerlaw" onclick="switchChart('powerlaw',this)">Power law position</button>
     </div>
     <div class="chart-wrap">
       <canvas id="mainChart"></canvas>
@@ -1929,10 +1942,10 @@ section.full { max-width: none; padding: 0; }
     </div>
     <div class="chart-legend" id="chartLegend"></div>
     <div id="chart-tab-caption" style="margin-top:6px;font-size:11px;color:var(--text3);line-height:1.6;">Real BTC held over time, plus a shaded projected range through 2030 — derived from the DCA framework's own rules and the power law corridor shown on the Power Law tab, not a single price forecast. Illustrative only, not revised once published.</div>
-    <div style="margin-top:10px;font-size:11px;color:var(--text3);">Live power law reference: <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank" style="color:var(--btc);text-decoration:none;">mNAV · Bitcoin power law chart</a></div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);">Live power law reference: <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank" rel="noopener noreferrer" style="color:var(--btc);text-decoration:none;">mNAV · Bitcoin power law chart</a></div>
   </div>
 
-  <div class="signal-row fade-up">
+  <div class="signal-row fade-up" id="cycle-phase">
     <div class="signal-card">
       <div class="signal-title">Halving cycle phase</div>
       <div class="signal-value" id="signal-day">Day –</div>
@@ -1991,7 +2004,7 @@ section.full { max-width: none; padding: 0; }
       <i class="ti ti-mail"></i>
       Become a founding member
     </button>
-    <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener" class="btn-ghost">Get the manual free first</a>
+    <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-ghost">Get the manual free first</a>
   </div>
 </div>
 </div>
@@ -2028,7 +2041,7 @@ section.full { max-width: none; padding: 0; }
     <i class="ti ti-refresh" style="color:var(--btc);font-size:16px;"></i>
     <span class="loop-text">Stack never sold. Value extracted without disposal. Bitcoin grows.</span>
   </div>
-  <div class="phase-timeline fade-up" style="margin-top:2.5rem;">
+  <div class="phase-timeline fade-up" id="pathway" style="margin-top:2.5rem;">
     <div class="phase-row done">
       <div class="phase-num"><i class="ti ti-check" style="font-size:13px;"></i></div>
       <div class="phase-body">
@@ -2142,7 +2155,7 @@ section.full { max-width: none; padding: 0; }
         <i class="ti ti-mail"></i>
         Become a founding member
       </button>
-      <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener" class="btn-ghost">Get the manual free first</a>
+      <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-ghost">Get the manual free first</a>
     </div>
   </div>
 </section>
@@ -2214,13 +2227,13 @@ section.full { max-width: none; padding: 0; }
       <div class="convergence-source">The On Chain Advisory Group</div>
       <div class="convergence-number" style="font-size:1.6rem;">Mortgage &amp; Tax</div>
       <div class="convergence-quote">"Buying property without selling crypto."</div>
-      <div class="convergence-context"><strong style="color:var(--text);">The gap:</strong> A Bitcoin holder approaching a property purchase or a tax structuring decision needs licensed advice this operation cannot give. <strong style="color:var(--text);">Who they are:</strong> Mortgage On Chain and Tax On Chain, together as The On Chain Advisory Group, are Australian, AFCA-member, crypto-aware mortgage broking and tax accounting specialists with over $1.5 billion in loans facilitated and partnerships across 80-plus lenders. <strong style="color:var(--text);">How to engage:</strong> <a href="https://mortgageonchain.com.au" target="_blank" rel="noopener">mortgageonchain.com.au</a> and <a href="https://taxonchain.com.au" target="_blank" rel="noopener">taxonchain.com.au</a>.</div>
+      <div class="convergence-context"><strong style="color:var(--text);">The gap:</strong> A Bitcoin holder approaching a property purchase or a tax structuring decision needs licensed advice this operation cannot give. <strong style="color:var(--text);">Who they are:</strong> Mortgage On Chain and Tax On Chain, together as The On Chain Advisory Group, are Australian, AFCA-member, crypto-aware mortgage broking and tax accounting specialists with over $1.5 billion in loans facilitated and partnerships across 80-plus lenders. <strong style="color:var(--text);">How to engage:</strong> <a href="https://mortgageonchain.com.au" target="_blank" rel="noopener noreferrer">mortgageonchain.com.au</a> and <a href="https://taxonchain.com.au" target="_blank" rel="noopener noreferrer">taxonchain.com.au</a>.</div>
     </div>
     <div class="convergence-card">
       <div class="convergence-source">ICEplan · Bradshaw Knox</div>
       <div class="convergence-number" style="font-size:1.6rem;">Succession</div>
       <div class="convergence-quote">"What happens to a self-custodied stack if the operator is no longer here to manage it."</div>
-      <div class="convergence-context"><strong style="color:var(--text);">The gap:</strong> Self-custody concentrates responsibility with the operator alone. Without documented succession, a stack can become permanently inaccessible. <strong style="color:var(--text);">Who they are:</strong> ICEplan, by Bradshaw Knox, provides structured succession and estate documentation specifically suited to self-custodied digital assets. <strong style="color:var(--text);">How to engage:</strong> <a href="https://bradshawknox.com/iceplan/" target="_blank" rel="noopener">bradshawknox.com/iceplan</a>.</div>
+      <div class="convergence-context"><strong style="color:var(--text);">The gap:</strong> Self-custody concentrates responsibility with the operator alone. Without documented succession, a stack can become permanently inaccessible. <strong style="color:var(--text);">Who they are:</strong> ICEplan, by Bradshaw Knox, provides structured succession and estate documentation specifically suited to self-custodied digital assets. <strong style="color:var(--text);">How to engage:</strong> <a href="https://bradshawknox.com/iceplan/" target="_blank" rel="noopener noreferrer">bradshawknox.com/iceplan</a>.</div>
     </div>
   </div>
 </section>
@@ -2245,18 +2258,18 @@ section.full { max-width: none; padding: 0; }
     <div class="modal-title">Subscribe to the operation</div>
     <div class="modal-sub">Fortnightly newsletter, complete decision log reasoning, and early notification of upcoming decisions. A documented Bitcoin treasury operation delivered directly to your inbox.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;">
-      <a href="https://buy.stripe.com/cNiaEW7mx6oXfyEdD0es000" target="_blank" rel="noopener" style="text-decoration:none;display:block;border:2px solid var(--btc);background:var(--btc-glow);border-radius:var(--radius-lg);padding:1rem;text-align:center;position:relative;">
+      <a href="https://buy.stripe.com/cNiaEW7mx6oXfyEdD0es000" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:2px solid var(--btc);background:var(--btc-glow);border-radius:var(--radius-lg);padding:1rem;text-align:center;position:relative;">
         <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--btc);color:#0a0a0c;font-size:9px;font-weight:700;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;white-space:nowrap;">FIRST 200 ONLY</div>
         <div style="font-family:var(--font-mono);font-size:11px;color:var(--btc);margin-bottom:4px;font-weight:600;margin-top:4px;">Foundation</div>
         <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$195</div>
         <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">one-off &middot; to Dec 2029</div>
       </a>
-      <a href="https://buy.stripe.com/aFa5kC8qB00z7280Qees001" target="_blank" rel="noopener" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
+      <a href="https://buy.stripe.com/aFa5kC8qB00z7280Qees001" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
         <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600;">Annual</div>
         <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$159</div>
         <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">per year</div>
       </a>
-      <a href="https://buy.stripe.com/00w6oG8qB7t19ag0Qees002" target="_blank" rel="noopener" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
+      <a href="https://buy.stripe.com/00w6oG8qB7t19ag0Qees002" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
         <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600;">Monthly</div>
         <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$19</div>
         <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">per month</div>
@@ -2281,22 +2294,22 @@ section.full { max-width: none; padding: 0; }
         <a href="#dashboard">Dashboard</a>
         <a href="#log">Decision log</a>
         <a href="#newsletter">Newsletter</a>
-        <a href="#dashboard">Towards 2030</a>
+        <a href="#charts" data-chart-tab="accumulation">Towards 2030</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Framework</div>
-        <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener">Operators manual</a>
-        <a href="#">Power law theory</a>
-        <a href="#">Halving cycle</a>
-        <a href="#">Custody pathway</a>
+        <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer">Operators manual</a>
+        <a href="#charts" data-chart-tab="powerlaw">Power law theory</a>
+        <a href="#cycle-phase">Halving cycle</a>
+        <a href="#pathway">Custody pathway</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Sources</div>
-        <a href="https://giovannisantostasi.medium.com/the-bitcoin-power-law-theory-962dfaf99ee9" target="_blank">Power Law &middot; Santostasi</a>
-        <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank">mNAV &middot; Live power law chart</a>
-        <a href="https://charts.bitbo.io/long-term-power-law/" target="_blank">Bitbo &middot; Power law chart</a>
-        <a href="https://charts.bitbo.io/halving-progress/" target="_blank">Bitbo &middot; Halving progress</a>
-        <a href="https://bradshawknox.com/iceplan/" target="_blank">ICEplan &middot; Bradshaw Knox</a>
+        <a href="https://giovannisantostasi.medium.com/the-bitcoin-power-law-theory-962dfaf99ee9" target="_blank" rel="noopener noreferrer">Power Law &middot; Santostasi</a>
+        <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank" rel="noopener noreferrer">mNAV &middot; Live power law chart</a>
+        <a href="https://charts.bitbo.io/long-term-power-law/" target="_blank" rel="noopener noreferrer">Bitbo &middot; Power law chart</a>
+        <a href="https://charts.bitbo.io/halving-progress/" target="_blank" rel="noopener noreferrer">Bitbo &middot; Halving progress</a>
+        <a href="https://bradshawknox.com/iceplan/" target="_blank" rel="noopener noreferrer">ICEplan &middot; Bradshaw Knox</a>
       </div>
     </div>
   </div>
@@ -2325,8 +2338,8 @@ const LOG_ENTRIES = [
   { year: '2026', date:"Mar '26", price:"$71.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Bull Run phase continues. Base rate maintained.", impact:"+0.006999 \u20bf", live:false },
   { year: '2026', date:"Apr '26", price:"$74k", tag:"milestone", tl:"Milestone", action:"Final month of Bull Run phase. Base rate maintained.", reasoning:"0.1 BTC accumulated through disciplined DCA from January 2025. Hardware wallet custody confirmed. Succession documentation complete. Last month before the framework enters Post-Peak Correction (month 25) and the Cycle Phase multiplier activates.", impact:"~0.0866 \u20bf held", live:false },
   { year: '2026', date:"May '26", price:"$78.9k", tag:"dca", tl:"DCA", action:"First month of Post-Peak Correction. Cycle Phase multiplier (2.0x) activates. $1,000 deployed.", reasoning:"Month 25 post-halving. DCA signal: Post-Peak Correction phase (2.0x base), no floor-zone adjustment this month. The framework's structural window for elevated accumulation begins.", impact:"+0.01267 \u20bf", live:false },
-  { year: '2026', date:"Jun '26", price:"$66.5k", tag:"dca", tl:"DCA", action:"Both triggers active: Post-Peak Correction (2.0x) + Power Law floor adjustment (+0.8x) = 2.8x. $1,400 deployed.", reasoning:"Price moved within 8% of the calculated power law floor for the first time since the operation began \u2014 a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading. No discretionary action taken, the framework's response is mechanical: the floor-zone multiplier engages automatically based on the 8% threshold.", impact:"+0.021 \u20bf", live:false },
-  { year: '2026', date:"Jul '26", price:"$64.9k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, second consecutive month. $1,400 deployed.", reasoning:"Floor $60,753 \u2014 price sat 6.83% above it, still inside the 8% band. Both triggers remain active. The multiplier is evaluated fresh at each execution based on price's position relative to the 8% band at that time, not a one-time signal.", impact:"+0.021572 \u20bf", live:false },
+  { year: '2026', date:"Jun '26", price:"$66.5k", tag:"dca", tl:"DCA", action:"Both triggers active: Post-Peak Correction (2.0x) + Power Law floor adjustment (+0.8x) = 2.8x. $1,400 deployed.", reasoning:"Price moved within 8% of the calculated power law floor for the first time since the operation began \u2014 a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading. No discretionary action taken, the framework's response is mechanical: the floor-zone multiplier engages automatically based on the 8% threshold.", impact:"+0.021 \u20bf", live:true },
+  { year: '2026', date:"Jul '26", price:"$64.9k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, second consecutive month. $1,400 deployed.", reasoning:"Floor $60,753 \u2014 price sat 6.83% above it, still inside the 8% band. Both triggers remain active. The multiplier is evaluated fresh at each execution based on price's position relative to the 8% band at that time, not a one-time signal.", impact:"+0.021572 \u20bf", live:true },
   { year: '2026', date:"Aug '26", price:"$63.1k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, third consecutive month. $1,400 deployed.", reasoning:"Floor $62,492 \u2014 price sat just 0.97% above it, comfortably inside the 8% band. Three consecutive elevated executions. The framework has no mechanism for fatigue \u2014 it only sizes according to the zone that prevails on the day.", impact:"+0.022187 \u20bf", live:true },
 ];
 
@@ -2341,7 +2354,7 @@ function buildLog() {
       container.appendChild(div);
       return;
     }
-    const yr = e.date.includes("25") ? "2025" : "2026";
+    const yr = e.year;
     if(yr !== prevYear) {
       const div = document.createElement('div');
       div.className = 'log-section-divider';
@@ -2422,10 +2435,16 @@ const projectionHigh = [null, null, null, null, null, null, null, null, null, nu
 let currentChart = null;
 let currentChartType = null;
 
+// The live operation starts at the Jun '26 entry; the line is placed at whichever
+// index that label sits in the chart's own labels, so it follows the data.
+const LIVE_START_LABEL = "Jun '26";
+
 const liveLinePlugin = {
   id: 'liveLine',
   afterDraw(chart) {
-    const x = chart.scales.x.getPixelForValue(16);
+    const liveIndex = chart.data.labels.indexOf(LIVE_START_LABEL);
+    if (liveIndex < 0) return;
+    const x = chart.scales.x.getPixelForValue(liveIndex);
     const {top, bottom} = chart.chartArea;
     chart.ctx.save();
     chart.ctx.setLineDash([4,3]);
@@ -2476,13 +2495,38 @@ const chartCaptions = {
   powerlaw: "Where price sits against the calculated power law floor, midpoint, and ceiling — the same corridor the DCA multiplier reacts to."
 };
 
+function showChartUnavailable() {
+  const canvas = document.getElementById('mainChart');
+  canvas.style.display = 'none';
+  const wrap = canvas.parentElement;
+  if (!wrap.querySelector('.chart-unavailable')) {
+    const msg = document.createElement('div');
+    msg.className = 'chart-unavailable';
+    msg.textContent = 'Chart unavailable';
+    wrap.appendChild(msg);
+  }
+  document.getElementById('chartLegend').innerHTML = '';
+}
+
 function switchChart(type, btn) {
+  if (!btn) btn = document.querySelector('.chart-tab[data-chart="' + type + '"]');
   document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  if(currentChart) currentChart.destroy();
   currentChartType = type;
   const captionEl = document.getElementById('chart-tab-caption');
   if (captionEl) captionEl.textContent = chartCaptions[type] || '';
+  if (typeof Chart === 'undefined') { showChartUnavailable(); return; }
+  try {
+    renderChart(type);
+  } catch (err) {
+    currentChart = null;
+    showChartUnavailable();
+    console.error('Chart render failed:', err);
+  }
+}
+
+function renderChart(type) {
+  if(currentChart) { currentChart.destroy(); currentChart = null; }
   const def = chartDefs[type];
   currentChart = new Chart(document.getElementById('mainChart').getContext('2d'), {
     type:'line', plugins:[liveLinePlugin],
@@ -2507,10 +2551,17 @@ function switchChart(type, btn) {
     }
   });
   const el = document.getElementById('chartLegend');
-  el.innerHTML = def.legend.map(i=>'<div class="legend-item"><div class="legend-line" style="background:'+i.c+';border-top:2px '+(i.d?'dashed':'solid')+' '+i.c+'"></div>'+i.l+'</div>').join('');
+  el.innerHTML = def.legend.map(i=>'<div class="legend-item"><div class="legend-line" style="border-top:2px '+(i.d?'dashed':'solid')+' '+i.c+'"></div>'+i.l+'</div>').join('');
 }
 
 switchChart('accumulation');
+
+// Links that point at a specific chart tab (e.g. "Towards 2030", "Power law theory")
+// switch to that tab; the href itself scrolls to the chart panel.
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('a[data-chart-tab]');
+  if (link) switchChart(link.dataset.chartTab);
+});
 
 
 
@@ -2642,8 +2693,12 @@ async function updateLiveDashboardStats() {
     // whichever chart is currently on screen if it uses that data
     prices[prices.length - 1] = price;
     if (currentChart && (currentChartType === 'price' || currentChartType === 'powerlaw')) {
-      currentChart.data.labels = months;
-      currentChart.update('none');
+      try {
+        currentChart.data.labels = months;
+        currentChart.update('none');
+      } catch (err) {
+        console.error('Chart refresh failed:', err);
+      }
     }
 
     const currentValue = BTC_HELD * price;
