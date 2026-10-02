@@ -921,6 +921,7 @@ section.full { max-width: none; padding: 0; }
 
 .chart-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 1.25rem;
 }
@@ -1503,6 +1504,10 @@ section.full { max-width: none; padding: 0; }
   padding: 2.5rem;
   max-width: 480px;
   width: 100%;
+  max-height: calc(100vh - 4rem);
+  max-height: calc(100dvh - 4rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   transform: translateY(20px);
   transition: transform 0.3s;
 }
@@ -1651,6 +1656,37 @@ section.full { max-width: none; padding: 0; }
   .log-header, .log-entry { grid-template-columns: 90px 1fr !important; }
   .log-header-cell:nth-child(2), .log-cell:nth-child(2) { display: none; }
   .log-header-cell:last-child, .log-cell:last-child { display: none; }
+}
+
+/* PHONE LAYOUT */
+/* Newsletter stacks a little earlier: below ~760px its inner cards drop under 160px wide */
+@media (max-width: 760px) {
+  .newsletter-intro { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  .newsletter-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .newsletter-card { padding: 1.5rem 1.25rem; }
+  .hero-stat { padding: 20px 16px; }
+  .hero-stat-value { font-size: clamp(18px, 5.5vw, 27px); }
+  .chart-tab { padding: 6px 12px; }
+  .sub-prompt { padding: 1.25rem; gap: 1rem; }
+  .sub-prompt-left { min-width: 0; flex-basis: 100%; }
+  .sub-prompt-right { width: 100%; align-items: stretch; }
+  .sub-prompt-right .btn-primary,
+  .sub-prompt-right .btn-ghost { justify-content: center; text-align: center; padding: 12px 16px; }
+  .swl-diagram { flex-direction: column; }
+  .swl-node { width: 100%; max-width: 280px; }
+  .swl-arrow { transform: rotate(90deg); padding: 8px 0; }
+  .phase-row { grid-template-columns: 44px 1fr; }
+  .phase-num { grid-row: 1 / span 2; min-height: 0; }
+  .phase-body { border-right: none; padding-bottom: 0.5rem; }
+  .phase-status { grid-column: 2; justify-content: flex-start; padding: 0 1.25rem 0.875rem; }
+  .modal-overlay { padding: 1rem; }
+  .modal { padding: 2rem 1.5rem 1.5rem; }
+  .pricing-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+}
+@media (max-width: 400px) {
+  .footer-copy { white-space: normal; }
 }
 </style>
 </head>
@@ -2090,7 +2126,7 @@ section.full { max-width: none; padding: 0; }
 <!-- NEWSLETTER -->
 <section id="newsletter">
   <div class="section-label">The fortnightly newsletter</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-bottom:0;" class="fade-up">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-bottom:0;" class="newsletter-intro fade-up">
     <div>
       <h2 style="font-size:clamp(1.5rem,2.5vw,2.2rem);margin-bottom:1rem;">Every two weeks. Documented. Reasoned.</h2>
       <p style="font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:1.25rem;">Subscribers receive a fortnightly newsletter that connects what the operation did in the past two weeks to the broader conditions that shaped those decisions. Not a price prediction. Not a trading signal. A documented account of one operator's Bitcoin treasury thinking in the context of the world around it.</p>
@@ -2257,7 +2293,7 @@ section.full { max-width: none; padding: 0; }
     <button class="modal-close" onclick="closeSubModal()"><i class="ti ti-x"></i></button>
     <div class="modal-title">Subscribe to the operation</div>
     <div class="modal-sub">Fortnightly newsletter, complete decision log reasoning, and early notification of upcoming decisions. A documented Bitcoin treasury operation delivered directly to your inbox.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;">
+    <div class="pricing-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;">
       <a href="https://buy.stripe.com/cNiaEW7mx6oXfyEdD0es000" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:2px solid var(--btc);background:var(--btc-glow);border-radius:var(--radius-lg);padding:1rem;text-align:center;position:relative;">
         <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--btc);color:#0a0a0c;font-size:9px;font-weight:700;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;white-space:nowrap;">FIRST 200 ONLY</div>
         <div style="font-family:var(--font-mono);font-size:11px;color:var(--btc);margin-bottom:4px;font-weight:600;margin-top:4px;">Foundation</div>
@@ -2610,17 +2646,38 @@ function handleMerchNotify() {
 }
 
 
+// Remember which control opened the subscription modal so focus can return to it.
+// A capturing click listener is used because Safari does not focus links/buttons on click.
+let lastClickedControl = null;
+let subModalOpener = null;
+document.addEventListener('click', function(e) {
+  lastClickedControl = e.target.closest('a, button');
+}, true);
+
 function openSubModal() {
+  subModalOpener = lastClickedControl || document.activeElement;
   document.getElementById('subModal').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.querySelector('#subModal .modal-close').focus({ preventScroll: true });
 }
 
 function closeSubModal(e) {
   if(!e || e.target.id === 'subModal' || e.currentTarget.className === 'modal-close') {
-    document.getElementById('subModal').classList.remove('open');
+    const modal = document.getElementById('subModal');
+    if (!modal.classList.contains('open')) return;
+    modal.classList.remove('open');
     document.body.style.overflow = '';
+    // The nav CTA lives in the mobile menu, which closes on click; fall back to the menu button
+    let target = subModalOpener;
+    if (target && !target.offsetParent) target = document.querySelector('.nav-hamburger');
+    if (target && target.offsetParent) target.focus({ preventScroll: true });
+    subModalOpener = null;
   }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('subModal').classList.contains('open')) closeSubModal();
+});
 
 function toggleMobileNav() {
   const links = document.getElementById('navLinks');
