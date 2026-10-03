@@ -1741,12 +1741,12 @@ section.full { max-width: none; padding: 0; }
         <div class="hero-stats" style="max-width:100%;">
           <div class="hero-stat">
             <div class="hero-stat-label">BTC held</div>
-            <div class="hero-stat-value btc" id="stat-btc">0.16404 ₿</div>
+            <div class="hero-stat-value btc" id="stat-btc">0.17709 ₿</div>
             <div class="hero-stat-sub">since Jan 2025</div>
           </div>
           <div class="hero-stat">
             <div class="hero-stat-label">Cost basis</div>
-            <div class="hero-stat-value" id="stat-basis">$80,466</div>
+            <div class="hero-stat-value" id="stat-basis">$80,183</div>
             <div class="hero-stat-sub">avg per BTC</div>
           </div>
           <div class="hero-stat">
@@ -1937,12 +1937,12 @@ section.full { max-width: none; padding: 0; }
   <div class="kpi-row fade-up" style="grid-template-columns:repeat(5,1fr);">
     <div class="kpi">
       <div class="kpi-label">BTC held</div>
-      <div class="kpi-value btc">0.16404 ₿</div>
+      <div class="kpi-value btc" id="kpi-btc">0.17709 ₿</div>
       <div class="kpi-sub">in self-custody</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Total invested</div>
-      <div class="kpi-value">$13,200</div>
+      <div class="kpi-value" id="kpi-invested">$14,200</div>
       <div class="kpi-sub">DCA since January 2025</div>
     </div>
     <div class="kpi">
@@ -1952,7 +1952,7 @@ section.full { max-width: none; padding: 0; }
     </div>
     <div class="kpi">
       <div class="kpi-label">Avg cost basis</div>
-      <div class="kpi-value">$80,466</div>
+      <div class="kpi-value" id="kpi-basis">$80,183</div>
       <div class="kpi-sub">per BTC</div>
     </div>
     <div class="kpi">
@@ -2377,6 +2377,7 @@ const LOG_ENTRIES = [
   { year: '2026', date:"Jun '26", price:"$66.5k", tag:"dca", tl:"DCA", action:"Both triggers active: Post-Peak Correction (2.0x) + Power Law floor adjustment (+0.8x) = 2.8x. $1,400 deployed.", reasoning:"Price moved within 8% of the calculated power law floor for the first time since the operation began \u2014 a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading. No discretionary action taken, the framework's response is mechanical: the floor-zone multiplier engages automatically based on the 8% threshold.", impact:"+0.021 \u20bf", live:true },
   { year: '2026', date:"Jul '26", price:"$64.9k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, second consecutive month. $1,400 deployed.", reasoning:"Floor $60,753 \u2014 price sat 6.83% above it, still inside the 8% band. Both triggers remain active. The multiplier is evaluated fresh at each execution based on price's position relative to the 8% band at that time, not a one-time signal.", impact:"+0.021572 \u20bf", live:true },
   { year: '2026', date:"Aug '26", price:"$63.1k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, third consecutive month. $1,400 deployed.", reasoning:"Floor $62,492 \u2014 price sat just 0.97% above it, comfortably inside the 8% band. Three consecutive elevated executions. The framework has no mechanism for fatigue \u2014 it only sizes according to the zone that prevails on the day.", impact:"+0.022187 \u20bf", live:true },
+  { year: '2026', date:"Sep '26", price:"$76.6k", tag:"dca", tl:"DCA", action:"Price clears the 8% floor band. Floor-zone adjustment drops away, 2.0x Cycle Phase multiplier remains. $1,000 deployed.", reasoning:"Floor $64,272 \u2014 price sat roughly 19% above it, well outside the 8% band, so no floor-zone adjustment applied. The Cycle Phase multiplier (2.0x) remains active as a calendar trigger, independent of price. The step down is as mechanical as the step up was in June.", impact:"+0.013055 \u20bf", live:true },
 ];
 
 function buildLog() {
@@ -2421,11 +2422,14 @@ function toggleReasoning(cell) {
 
 buildLog();
 
-const months = ["Jan '25","Feb '25","Mar '25","Apr '25","May '25","Jun '25","Jul '25","Aug '25","Sep '25","Oct '25","Nov '25","Dec '25","Jan '26","Feb '26","Mar '26","Apr '26","May '26","Jun '26","Jul '26","Aug '26"];
-const prices = [97000,97500,83700,83600,101700,104900,117400,117000,114900,111000,94800,87000,95600,68500,71500,74000,78900,66500,64900,63100];
-const btcActual = [0.005154,0.010274,0.016248,0.022228,0.027148,0.031914,0.036183,0.040457,0.044807,0.049307,0.054577,0.060327,0.065557,0.072857,0.079856,0.086616,0.099286,0.120286,0.141858,0.164045];
-const costBasis = [97012,97333,92319,89977,92088,94003,96731,98870,100431,101405,100775,99458,99150,96079,93919,92362,90647,86461,83182,80466];
-const plCeil =  [131000,135000,139000,142900,146900,151200,155900,160200,164900,169900,174600,179600,185000,190400,195800,201200,207000,212800,218900,225000];
+// Month labels and execution prices come straight from the decision log, so a new
+// LOG_ENTRIES row extends them automatically. btcActual, costBasis and plCeil below
+// still need one value appended per new entry.
+const months = LOG_ENTRIES.map(e => e.date);
+const prices = LOG_ENTRIES.map(e => Math.round(parseFloat(e.price.replace(/[$,k]/g, '')) * 1000));
+const btcActual = [0.005154,0.010274,0.016248,0.022228,0.027148,0.031914,0.036183,0.040457,0.044807,0.049307,0.054577,0.060327,0.065557,0.072857,0.079856,0.086616,0.099286,0.120286,0.141858,0.164045,0.1771];
+const costBasis = [97012,97333,92319,89977,92088,94003,96731,98870,100431,101405,100775,99458,99150,96079,93919,92362,90647,86461,83182,80466,80183];
+const plCeil =  [131000,135000,139000,142900,146900,151200,155900,160200,164900,169900,174600,179600,185000,190400,195800,201200,207000,212800,218900,225000,231500];
 
 // --- Power law floor and midpoint, computed from the validated formula rather than
 // static/interpolated estimates. Genuinely self-updating for any date. ---
@@ -2451,8 +2455,8 @@ for (let y = 2025; y <= 2030; y++) {
   }
 }
 
-const plFloor = chartMonthDates.slice(0, 20).map(d => Math.round(calculatePowerLawFloor(d)));
-const plMid = chartMonthDates.slice(0, 20).map(d => Math.round(calculatePowerLawMidpoint(d)));
+const plFloor = chartMonthDates.slice(0, months.length).map(d => Math.round(calculatePowerLawFloor(d)));
+const plMid = chartMonthDates.slice(0, months.length).map(d => Math.round(calculatePowerLawMidpoint(d)));
 
 // One extra "live" point appended to the historical series, representing today rather
 // than a completed calendar month. Price starts null and is filled in once the live
@@ -2465,7 +2469,8 @@ plMid.push(Math.round(calculatePowerLawMidpoint(new Date())));
 plCeil.push(Math.round(plCeil[plCeil.length - 1] * (plCeil[plCeil.length - 1] / plCeil[plCeil.length - 2])));
 
 const monthsExtended = ["Jan '25", "Feb '25", "Mar '25", "Apr '25", "May '25", "Jun '25", "Jul '25", "Aug '25", "Sep '25", "Oct '25", "Nov '25", "Dec '25", "Jan '26", "Feb '26", "Mar '26", "Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26", "Oct '26", "Nov '26", "Dec '26", "Jan '27", "Feb '27", "Mar '27", "Apr '27", "May '27", "Jun '27", "Jul '27", "Aug '27", "Sep '27", "Oct '27", "Nov '27", "Dec '27", "Jan '28", "Feb '28", "Mar '28", "Apr '28", "May '28", "Jun '28", "Jul '28", "Aug '28", "Sep '28", "Oct '28", "Nov '28", "Dec '28", "Jan '29", "Feb '29", "Mar '29", "Apr '29", "May '29", "Jun '29", "Jul '29", "Aug '29", "Sep '29", "Oct '29", "Nov '29", "Dec '29", "Jan '30", "Feb '30", "Mar '30", "Apr '30", "May '30", "Jun '30", "Jul '30", "Aug '30", "Sep '30", "Oct '30", "Nov '30", "Dec '30"];
-const btcActualExtended = [0.005154, 0.010274, 0.016248, 0.022228, 0.027148, 0.031914, 0.036183, 0.040457, 0.044807, 0.049307, 0.054577, 0.060327, 0.065557, 0.072857, 0.079856, 0.086616, 0.099286, 0.120286, 0.141858, 0.164045, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+// Actual holdings on the extended (to 2030) axis: the recorded series, then empty months
+const btcActualExtended = monthsExtended.map((_, i) => i < btcActual.length ? btcActual[i] : null);
 const projectionLow = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.164045, 0.1735, 0.1826, 0.1915, 0.2002, 0.2086, 0.2167, 0.2247, 0.2324, 0.2362, 0.2398, 0.2434, 0.2468, 0.2502, 0.2535, 0.2566, 0.2597, 0.2627, 0.2656, 0.2685, 0.2712, 0.2739, 0.2765, 0.279, 0.2815, 0.2839, 0.2862, 0.2885, 0.2907, 0.2928, 0.2949, 0.2969, 0.2988, 0.3008, 0.3026, 0.3044, 0.3062, 0.3079, 0.3095, 0.3111, 0.3127, 0.3142, 0.3157, 0.3171, 0.3185, 0.3213, 0.3239, 0.3265, 0.329, 0.3314, 0.3338, 0.3361, 0.3383];
 const projectionHigh = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0.164045, 0.1812, 0.1979, 0.2142, 0.23, 0.2453, 0.2602, 0.2747, 0.2889, 0.2937, 0.2985, 0.3031, 0.3076, 0.312, 0.3163, 0.3204, 0.3244, 0.3283, 0.3321, 0.3358, 0.3394, 0.3429, 0.3463, 0.3496, 0.3528, 0.3559, 0.3589, 0.3619, 0.3648, 0.3675, 0.3702, 0.3729, 0.3754, 0.3779, 0.3803, 0.3827, 0.385, 0.3872, 0.3894, 0.3915, 0.3935, 0.3955, 0.3974, 0.3993, 0.4011, 0.4061, 0.4109, 0.4156, 0.4202, 0.4246, 0.4289, 0.4331, 0.4372];
 
@@ -2733,8 +2738,22 @@ const CYCLE_PHASE_ACTIVE = true;
 const CYCLE_PHASE_END = new Date('2027-04-20');
 
 // --- Live price, current value, and P&L (static facts updated monthly at each DCA) ---
-const BTC_HELD = 0.16404;
-const TOTAL_FIAT_DEPLOYED = 13200;
+// BTC_HELD carries the unrounded running total (0.16404 + 0.013055); it displays as 0.17709.
+const BTC_HELD = 0.177095;
+const TOTAL_FIAT_DEPLOYED = 14200;
+
+// Hero and KPI position figures are derived from BTC_HELD and TOTAL_FIAT_DEPLOYED,
+// so updating those two constants at each DCA updates every display.
+function formatBtc(v) { return (Math.floor(v * 1e5) / 1e5).toFixed(5) + ' \u20bf'; }
+function formatUsd(v) { return '$' + Math.round(v).toLocaleString('en-US'); }
+(function renderPositionFigures() {
+  const avgCost = TOTAL_FIAT_DEPLOYED / BTC_HELD;
+  document.getElementById('stat-btc').textContent = formatBtc(BTC_HELD);
+  document.getElementById('kpi-btc').textContent = formatBtc(BTC_HELD);
+  document.getElementById('kpi-invested').textContent = formatUsd(TOTAL_FIAT_DEPLOYED);
+  document.getElementById('stat-basis').textContent = formatUsd(avgCost);
+  document.getElementById('kpi-basis').textContent = formatUsd(avgCost);
+})();
 const COINGECKO_API_KEY = ''; // paste a free CoinGecko Demo API key here once obtained
 
 async function updateLiveDashboardStats() {
