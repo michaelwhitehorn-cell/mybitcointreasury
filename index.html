@@ -30,7 +30,6 @@
 <style>
 :root {
   --btc: #F7931A;
-  --btc-dim: #C4701200;
   --btc-glow: rgba(247,147,26,0.15);
   --btc-line: rgba(247,147,26,0.3);
   --dark: #0A0A0A;
@@ -67,44 +66,6 @@ body {
   overflow-x: hidden;
 }
 
-/* HERO LOOP DIAGRAM */
-.hero-loop-diagram {
-  background: rgba(247,147,26,0.03);
-  border: 1px solid rgba(247,147,26,0.12);
-  border-radius: var(--radius-xl);
-  padding: 2rem 1.75rem;
-  backdrop-filter: blur(10px);
-}
-.hero-loop-nodes {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  align-items: center;
-}
-.hero-loop-node {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1rem 2rem;
-  text-align: center;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-.hero-loop-node.active {
-  border-color: var(--btc-line);
-  background: var(--btc-glow);
-}
-.hero-loop-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: 0.02em;
-}
-.hero-loop-connector {
-  display: flex;
-  justify-content: center;
-  padding: 6px 0;
-}
 /* SUBSCRIPTION INLINE PROMPT */
 .sub-prompt {
   background: var(--surface2);
@@ -149,13 +110,7 @@ body {
   color: var(--text2);
   line-height: 1.6;
 }
-.sub-prompt-price {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text3);
-  margin-top: 6px;
-}
-.sub-prompt-price strong { color: var(--btc); }
+
 .sub-prompt-right {
   display: flex;
   flex-direction: column;
@@ -351,10 +306,6 @@ body {
 .badge-active { background: rgba(247,147,26,0.15); color: #F7931A; }
 .badge-next { background: rgba(255,255,255,0.05); color: var(--text3); }
 
-@media (max-width: 900px) {
-  .hero-loop-diagram { display: none; }
-}
-
 /* GRAIN OVERLAY */
 body::before {
   content: '';
@@ -368,7 +319,6 @@ body::before {
 
 /* TYPOGRAPHY */
 h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; }
-.mono { font-family: var(--font-mono); }
 
 /* NAV */
 nav {
@@ -984,15 +934,6 @@ section.full { max-width: none; padding: 0; }
   flex-shrink: 0;
 }
 
-/* LIVE MARKER */
-.live-marker-label {
-  font-size: 10px;
-  font-family: var(--font-mono);
-  color: var(--btc);
-  text-align: center;
-  margin-top: 4px;
-}
-
 /* SIGNAL ROW */
 .signal-row {
   display: grid;
@@ -1171,14 +1112,6 @@ section.full { max-width: none; padding: 0; }
   white-space: nowrap;
 }
 .lsd-line { flex: 1; height: 1px; background: var(--border); }
-.lsd-live {
-  font-size: 10px;
-  font-family: var(--font-mono);
-  color: var(--btc);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
 
 /* CONVERGENCE */
 .convergence-grid {
@@ -1293,12 +1226,6 @@ section.full { max-width: none; padding: 0; }
   margin-bottom: 4px;
 }
 
-.swl-node-sub {
-  font-size: 11px;
-  color: var(--text3);
-  line-height: 1.4;
-}
-
 .swl-arrow {
   color: var(--btc);
   font-size: 18px;
@@ -1319,152 +1246,6 @@ section.full { max-width: none; padding: 0; }
   font-size: 18px;
   color: var(--btc);
 }
-
-/* TOWARDS 2030 */
-.towards-hero {
-  text-align: center;
-  padding: 5rem 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.towards-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -2px;
-  line-height: 1.05;
-  margin-bottom: 1.5rem;
-}
-.towards-title em { font-style: italic; color: var(--btc); }
-
-.towards-sub {
-  font-size: 17px;
-  color: var(--text2);
-  line-height: 1.7;
-  font-weight: 300;
-  margin-bottom: 3rem;
-}
-
-.goal-scenarios {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin-top: 2rem;
-}
-
-.goal-scenario {
-  background: var(--surface);
-  padding: 1.75rem;
-  text-align: center;
-}
-.goal-scenario.base { background: var(--surface2); }
-
-.scenario-label {
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-}
-.scenario-btc {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 0.25rem;
-}
-.scenario-value {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  margin-bottom: 0.75rem;
-}
-.scenario-desc {
-  font-size: 12px;
-  color: var(--text2);
-  line-height: 1.5;
-}
-.scenario-assumptions {
-  font-size: 10px;
-  color: var(--text3);
-  margin-top: 0.5rem;
-  font-family: var(--font-mono);
-}
-
-/* MERCH */
-.merch-banner {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-  position: relative;
-  overflow: hidden;
-}
-.merch-banner::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 50%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(247,147,26,0.04), transparent 60%);
-  pointer-events: none;
-}
-.merch-left { flex: 1; min-width: 280px; }
-.merch-coming {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text3);
-  border: 1px solid var(--border);
-  padding: 4px 10px;
-  border-radius: 2px;
-  margin-bottom: 1rem;
-}
-.merch-title {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 600;
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
-}
-.merch-title em { font-style: italic; color: var(--btc); }
-.merch-desc {
-  font-size: 13px;
-  color: var(--text2);
-  line-height: 1.7;
-  max-width: 480px;
-}
-.merch-previews {
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.merch-item {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem 1.5rem;
-  text-align: center;
-  min-width: 130px;
-}
-.merch-item-icon { font-size: 28px; margin-bottom: 8px; }
-.merch-item-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
-.merch-item-desc { font-size: 10px; color: var(--text3); font-family: var(--font-mono); }
 
 /* ANIMATIONS */
 .fade-up {
@@ -1536,29 +1317,7 @@ section.full { max-width: none; padding: 0; }
   padding: 4px;
 }
 
-.success-state {
-  text-align: center;
-  padding: 1rem 0;
-  display: none;
-}
-.success-icon {
-  font-size: 3rem;
-  color: var(--btc);
-  margin-bottom: 1rem;
-}
-.success-title {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-.success-sub {
-  font-size: 14px;
-  color: var(--text2);
-  line-height: 1.6;
-}
-
-/* SCROLL indicator */
+/* HERO LATEST-ISSUE CALLOUT */
 .hero-latest-callout {
   display: flex;
   align-items: center;
@@ -1590,6 +1349,7 @@ section.full { max-width: none; padding: 0; }
   .hero-latest-text { font-size: 13px; flex-basis: 100%; order: 3; margin-top: 4px; }
 }
 
+/* SCROLL indicator */
 .scroll-hint {
   display: flex;
   align-items: center;
@@ -1611,11 +1371,6 @@ section.full { max-width: none; padding: 0; }
   .founder-section { grid-template-columns: 1fr; gap: 3rem; }
   .inflection-grid { grid-template-columns: 1fr; }
   .convergence-grid { grid-template-columns: 1fr; }
-  .founding-top { grid-template-columns: 1fr; }
-  .founding-left { border-right: none; border-bottom: 1px solid var(--border); }
-  .framework-grid { grid-template-columns: 1fr; }
-  .goal-scenarios { grid-template-columns: 1fr; }
-  .referral-grid { grid-template-columns: repeat(2, 1fr); }
   .kpi-row { grid-template-columns: repeat(2, 1fr) !important; }
   .signal-row { grid-template-columns: 1fr; }
   .nav-hamburger { display: block; }
@@ -2198,11 +1953,6 @@ section.full { max-width: none; padding: 0; }
 
 <hr class="section-divider">
 
-
-
-
-<hr class="section-divider">
-
 <!-- CONVERGENCE -->
 <section>
   <div class="section-label">External context</div>
@@ -2273,19 +2023,6 @@ section.full { max-width: none; padding: 0; }
     </div>
   </div>
 </section>
-
-<hr class="section-divider">
-
-<!-- FREE MANUAL MODAL -->
-<div class="modal-overlay" id="freeModal" onclick="closeFreeModal(event)">
-  <div class="modal" style="position:relative;max-width:480px;">
-    <button class="modal-close" onclick="closeFreeModal()"><i class="ti ti-x"></i></button>
-    <div class="modal-title">Get the operators manual</div>
-    <div class="modal-sub">The complete MyBitcoinTreasury thesis: documented history starting January 2025, the power law framework, the decision log, The Sovereign Wealth Stack, and the Towards 2030 roadmap. Free, via email.</div>
-    <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1rem;">No spam. The operators manual delivered to your inbox, then fortnightly updates from the operation. Unsubscribe any time.</p>
-    <script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" data-beehiiv-form="a7ac9d47-c67f-4bc0-9950-ff950cc4f8a8"></script>
-  </div>
-</div>
 
 <!-- SUBSCRIPTION MODAL -->
 <div class="modal-overlay" id="subModal" onclick="closeSubModal(event)">
@@ -2384,13 +2121,6 @@ function buildLog() {
   const container = document.getElementById('decisionLog');
   let prevYear = null;
   LOG_ENTRIES.forEach(e => {
-    if(e.divider) {
-      const div = document.createElement('div');
-      div.className = 'log-section-divider';
-      div.innerHTML = '<div class="lsd-line"></div><div class="lsd-live"><span class="live-dot" style="background:var(--btc);animation:pulse 2s infinite;"></span>Live operation from here, Jun 2026</div><div class="lsd-line"></div>';
-      container.appendChild(div);
-      return;
-    }
     const yr = e.year;
     if(yr !== prevYear) {
       const div = document.createElement('div');
@@ -2446,17 +2176,11 @@ function calculatePowerLawFloor(date) {
   return calculatePowerLawMidpoint(date) * PL_FLOOR_RATIO;
 }
 
-// One date per chart month (15th, matching the DCA schedule) - Jan 2025 through Dec 2030
-const chartMonthDates = [];
-for (let y = 2025; y <= 2030; y++) {
-  for (let m = 0; m < 12; m++) {
-    if (y === 2025 && m < 0) continue;
-    chartMonthDates.push(new Date(y, m, 15));
-  }
-}
+// One date per logged month (15th, matching the DCA schedule), starting Jan 2025 with the first log entry
+const chartMonthDates = months.map((_, i) => new Date(2025, i, 15));
 
-const plFloor = chartMonthDates.slice(0, months.length).map(d => Math.round(calculatePowerLawFloor(d)));
-const plMid = chartMonthDates.slice(0, months.length).map(d => Math.round(calculatePowerLawMidpoint(d)));
+const plFloor = chartMonthDates.map(d => Math.round(calculatePowerLawFloor(d)));
+const plMid = chartMonthDates.map(d => Math.round(calculatePowerLawMidpoint(d)));
 
 // One extra "live" point appended to the historical series, representing today rather
 // than a completed calendar month. Price starts null and is filled in once the live
@@ -2606,51 +2330,10 @@ document.addEventListener('click', function(e) {
 });
 
 
-
 const obs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
 },{threshold:0.08});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
-
-function openFreeModal(){
-  document.getElementById('freeModal').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeFreeModal(e){
-  if(!e||e.target.id==='freeModal'||e.type!=='click'||e.currentTarget.className==='modal-close'||e.currentTarget.tagName==='BUTTON'){
-    document.getElementById('freeModal').classList.remove('open');
-    document.body.style.overflow='';
-  }
-}
-// Free signup handled by Beehiiv embed
-
-
-function copyAddr(addrId, feedbackId) {
-  const text = document.getElementById(addrId).textContent.trim();
-  navigator.clipboard.writeText(text).then(() => {
-    const fb = document.getElementById(feedbackId);
-    fb.style.display = 'block';
-    setTimeout(() => fb.style.display = 'none', 2500);
-  }).catch(() => {
-    // Fallback for browsers without clipboard API
-    const el = document.getElementById(addrId);
-    const range = document.createRange();
-    range.selectNode(el);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-  });
-}
-
-function handleMerchNotify() {
-  const btn = document.getElementById('merch-btn');
-  const confirm = document.getElementById('merch-confirm');
-  btn.textContent = 'Noted, we will let you know';
-  btn.disabled = true;
-  btn.style.opacity = '0.6';
-  confirm.textContent = 'Added to the notify list.';
-  confirm.style.display = 'inline';
-}
-
 
 // Remember which control opened the subscription modal so focus can return to it.
 // A capturing click listener is used because Safari does not focus links/buttons on click.
@@ -2668,7 +2351,7 @@ function openSubModal() {
 }
 
 function closeSubModal(e) {
-  if(!e || e.target.id === 'subModal' || e.currentTarget.className === 'modal-close') {
+  if(!e || e.target.id === 'subModal') {
     const modal = document.getElementById('subModal');
     if (!modal.classList.contains('open')) return;
     modal.classList.remove('open');
@@ -2700,18 +2383,6 @@ document.getElementById('navLinks').addEventListener('click', function(e) {
   }
 });
 
-function handleSubSignup() {
-  const name = document.getElementById('sub-name').value;
-  const email = document.getElementById('sub-email').value;
-  if(!name || !email || !email.includes('@')) {
-    if(!name) document.getElementById('sub-name').style.borderColor = 'var(--red)';
-    if(!email || !email.includes('@')) document.getElementById('sub-email').style.borderColor = 'var(--red)';
-    return;
-  }
-  document.getElementById('subFormState').style.display = 'none';
-  document.getElementById('subSuccess').style.display = 'block';
-}
-
 const HALVING_DATE=new Date('2024-04-20');
 const TODAY=new Date();
 document.getElementById('stat-cycle').textContent=Math.round((TODAY-HALVING_DATE)/86400000);
@@ -2734,7 +2405,6 @@ document.getElementById('stat-cycle').textContent=Math.round((TODAY-HALVING_DATE
 })();
 
 // Cycle Phase: Post-Peak Correction, confirmed active through April 2027 regardless of price
-const CYCLE_PHASE_ACTIVE = true;
 const CYCLE_PHASE_END = new Date('2027-04-20');
 
 // --- Live price, current value, and P&L (static facts updated monthly at each DCA) ---
