@@ -1496,12 +1496,12 @@ section.full { max-width: none; padding: 0; }
         <div class="hero-stats" style="max-width:100%;">
           <div class="hero-stat">
             <div class="hero-stat-label">BTC held</div>
-            <div class="hero-stat-value btc" id="stat-btc">0.17709 ₿</div>
+            <div class="hero-stat-value btc" id="stat-btc">0.17710 ₿</div>
             <div class="hero-stat-sub">since Jan 2025</div>
           </div>
           <div class="hero-stat">
             <div class="hero-stat-label">Cost basis</div>
-            <div class="hero-stat-value" id="stat-basis">$80,183</div>
+            <div class="hero-stat-value" id="stat-basis">$80,181</div>
             <div class="hero-stat-sub">avg per BTC</div>
           </div>
           <div class="hero-stat">
@@ -1692,7 +1692,7 @@ section.full { max-width: none; padding: 0; }
   <div class="kpi-row fade-up" style="grid-template-columns:repeat(5,1fr);">
     <div class="kpi">
       <div class="kpi-label">BTC held</div>
-      <div class="kpi-value btc" id="kpi-btc">0.17709 ₿</div>
+      <div class="kpi-value btc" id="kpi-btc">0.17710 ₿</div>
       <div class="kpi-sub">in self-custody</div>
     </div>
     <div class="kpi">
@@ -1707,7 +1707,7 @@ section.full { max-width: none; padding: 0; }
     </div>
     <div class="kpi">
       <div class="kpi-label">Avg cost basis</div>
-      <div class="kpi-value" id="kpi-basis">$80,183</div>
+      <div class="kpi-value" id="kpi-basis">$80,181</div>
       <div class="kpi-sub">per BTC</div>
     </div>
     <div class="kpi">
@@ -1756,7 +1756,7 @@ section.full { max-width: none; padding: 0; }
 
   <div style="margin-top:12px;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);border-left:2px solid var(--btc-line);">
     <div style="font-size:12px;color:var(--text2);line-height:1.7;">
-      <strong style="color:var(--text);">What does the framework say about current conditions?</strong> Price moved within 8% of the calculated power law floor for the first time since live public documentation began in June 2026 — a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading: 2.8x rather than the usual 1.5-2.0x range. The June, July and August 2026 executions were all floor-zone buys; price has since moved clear of the 8% band. The framework does not predict how long the floor zone will hold, it simply weights the DCA more heavily while price sits there. The operators manual documents the full three-tier power law framework and the treasury actions framework for operators who are ready to go beyond accumulation.
+      <strong style="color:var(--text);">What does the framework say about current conditions?</strong> Price moved within 8% of the calculated power law floor for the first time since live public documentation began in June 2026 — a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading: 2.8x rather than the usual 1.5-2.0x range. The June, July and August 2026 executions were all floor-zone buys; price has since moved clear of the 8% band, and the September execution ran at 2.0x with price above the floor band. The framework does not predict how long the floor zone will hold, it simply weights the DCA more heavily while price sits there. The operators manual documents the full three-tier power law framework and the treasury actions framework for operators who are ready to go beyond accumulation.
     </div>
   </div>
 </section>
@@ -1777,6 +1777,20 @@ section.full { max-width: none; padding: 0; }
       <div style="margin-top:3px;">Execution: <span style="color:var(--btc);">15th each month · 24/7</span></div>
     </div>
   </div>
+  <div class="sub-prompt fade-up" style="margin-top:0;margin-bottom:1.5rem;">
+    <div class="sub-prompt-left">
+      <div class="sub-prompt-eyebrow">Founding members</div>
+      <div class="sub-prompt-title">The full log is open. The Fortnightly goes further.</div>
+      <div class="sub-prompt-desc">Every entry and its complete reasoning is open to everyone, back to January 2025. Subscribers receive The Fortnightly — the newsletter analysis connecting each decision to the conditions around it, with early notification of upcoming decision points — delivered directly to their inbox, along with the operators manual. Founding members on the Foundation tier secure access through to December 2029 with a single one-off payment, limited to the first 200.</div>
+    </div>
+    <div class="sub-prompt-right">
+      <button class="btn-primary" onclick="openSubModal()">
+        <i class="ti ti-mail"></i>
+        Become a founding member
+      </button>
+      <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-ghost">Get the manual free first</a>
+    </div>
+  </div>
   <div class="log-header fade-up" style="grid-template-columns:100px 90px 1fr 100px;">
     <div class="log-header-cell">Date / Price</div>
     <div class="log-header-cell">Type</div>
@@ -1784,20 +1798,6 @@ section.full { max-width: none; padding: 0; }
     <div class="log-header-cell" style="text-align:right;">Impact</div>
   </div>
   <div class="log-entries fade-up" id="decisionLog">
-<div class="sub-prompt fade-up">
-  <div class="sub-prompt-left">
-    <div class="sub-prompt-eyebrow">Founding members</div>
-    <div class="sub-prompt-title">The full log is open. The Fortnightly goes further.</div>
-    <div class="sub-prompt-desc">Every entry and its complete reasoning is open to everyone, back to January 2025. Subscribers receive The Fortnightly — the newsletter analysis connecting each decision to the conditions around it, with early notification of upcoming decision points — delivered directly to their inbox, along with the operators manual. Founding members on the Foundation tier secure access through to December 2029 with a single one-off payment, limited to the first 200.</div>
-  </div>
-  <div class="sub-prompt-right">
-    <button class="btn-primary" onclick="openSubModal()">
-      <i class="ti ti-mail"></i>
-      Become a founding member
-    </button>
-    <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-ghost">Get the manual free first</a>
-  </div>
-</div>
 </div>
 </section>
 
@@ -1853,7 +1853,7 @@ section.full { max-width: none; padding: 0; }
       <div class="phase-num"><i class="ti ti-check" style="font-size:13px;"></i></div>
       <div class="phase-body">
         <div class="phase-title">Phase 3: Custody</div>
-        <div class="phase-desc">Hardware wallet setup, stack migrated to self-custody, succession plan in place. Completed Nov 2025.</div>
+        <div class="phase-desc">Hardware wallet setup and full self-custody completed Nov 2025. Succession plan completed Apr 2026.</div>
       </div>
       <div class="phase-status"><span class="phase-badge badge-done">Complete</span></div>
     </div>
@@ -2029,7 +2029,7 @@ section.full { max-width: none; padding: 0; }
   <div class="modal" style="position:relative;max-width:640px;" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeSubModal()"><i class="ti ti-x"></i></button>
     <div class="modal-title">Subscribe to the operation</div>
-    <div class="modal-sub">Fortnightly newsletter, complete decision log reasoning, and early notification of upcoming decisions. A documented Bitcoin treasury operation delivered directly to your inbox.</div>
+    <div class="modal-sub">The Fortnightly newsletter in full, early notification of upcoming decision points, and the operators manual. A documented Bitcoin treasury operation delivered directly to your inbox.</div>
     <div class="pricing-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;">
       <a href="https://buy.stripe.com/cNiaEW7mx6oXfyEdD0es000" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:2px solid var(--btc);background:var(--btc-glow);border-radius:var(--radius-lg);padding:1rem;text-align:center;position:relative;">
         <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--btc);color:#0a0a0c;font-size:9px;font-weight:700;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;white-space:nowrap;">FIRST 200 ONLY</div>
@@ -2094,27 +2094,27 @@ section.full { max-width: none; padding: 0; }
 
 <script>
 const LOG_ENTRIES = [
-  { year: '2025', date:"Jan '25", price:"$97k", tag:"dca", tl:"DCA", action:"First DCA purchase at $97,000. Strategy: accumulate, hold, no complexity.", reasoning:"Strategy begins below the January ATH of $109k. One rule: buy $500 on the 15th, every month. No timing, no forecast. Hold in exchange custody until 0.05 BTC threshold reached for hardware wallet migration.", impact:"+0.005154 \u20bf", live:false },
-  { year: '2025', date:"Feb '25", price:"$97.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule. Base rate, no deviation.", reasoning:"Lower prices mean more sats for the same fiat when they come. Pausing DCA during a drawdown is the most common and most costly mistake a long-term accumulator makes.", impact:"+0.00512 \u20bf", live:false },
-  { year: '2025', date:"Mar '25", price:"$83.7k", tag:"dca", tl:"DCA", action:"Price corrects 14% from February. DCA executed without hesitation.", reasoning:"Base rate maintained through the pullback. The framework does not react to single-month drawdowns, it reacts to structural conditions.", impact:"+0.005974 \u20bf", live:false },
-  { year: '2025', date:"Apr '25", price:"$83.6k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Consolidation continues. Base rate maintained.", impact:"+0.00598 \u20bf", live:false },
-  { year: '2025', date:"May '25", price:"$101.7k", tag:"dca", tl:"DCA", action:"Price recovers above $100k. Base rate maintained.", reasoning:"No change in posture on the way back up. The framework's discipline runs both directions.", impact:"+0.00492 \u20bf", live:false },
-  { year: '2025', date:"Jun '25", price:"$104.9k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained.", impact:"+0.004766 \u20bf", live:false },
-  { year: '2025', date:"Jul '25", price:"$117.4k", tag:"strategy", tl:"Strategy", action:"Cycle ATH approached. Framework assessed at elevated prices.", reasoning:"With price approaching ATH territory, the framework was used to assess conditions. The decision: maintain accumulation discipline at base rate. No deviation from the DCA plan.", impact:"+0.004269 \u20bf", live:false },
-  { year: '2025', date:"Aug '25", price:"$117k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained near cycle highs.", impact:"+0.004274 \u20bf", live:false },
-  { year: '2025', date:"Sep '25", price:"$114.9k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained.", impact:"+0.00435 \u20bf", live:false },
-  { year: '2025', date:"Oct '25", price:"$111k", tag:"milestone", tl:"Milestone", action:"Cycle ATH of $126,198 reached this month. Framework holds. No sell.", reasoning:"At the all-time high the temptation to deviate from the plan is at its strongest. Decision: continue base DCA exactly as documented. The pull to time an exit is genuine and documented here. The framework held at the hardest moment, which is the entire point of having one.", impact:"~0.0493 \u20bf total", live:false },
-  { year: '2025', date:"Nov '25", price:"$94.8k", tag:"custody", tl:"Custody", action:"Stack reaches 0.05 BTC. Hardware wallet purchased. Full self-custody secured.", reasoning:"Custody milestone reached. Stack migrated from exchange to hardware wallet. Seed phrase secured in two physical locations. Passphrase set. Succession documentation initiated. Not your keys, not your coins.", impact:"~0.0546 \u20bf secured", live:false },
-  { year: '2025', date:"Dec '25", price:"$87k", tag:"strategy", tl:"Strategy", action:"Correction deepens, 30% below the October ATH. Base rate maintained.", reasoning:"The DCA signal was reviewed: still inside Bull Run phase, no elevation triggered. Decision: continue disciplined accumulation. The framework held through the correction as designed.", impact:"+0.00575 \u20bf", live:false },
-  { year: '2026', date:"Jan '26", price:"$95.6k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Bull Run phase (month 20.9 post-halving). No elevation trigger active. Base DCA executed on schedule, on the 15th, regardless of the broader correction underway.", impact:"+0.00523 \u20bf", live:false },
-  { year: '2026', date:"Feb '26", price:"$68.5k", tag:"risk", tl:"Correction low", action:"Price falls sharply. DCA executed without deviation, still at base rate.", reasoning:"Bull Run phase (month 21.9), still no elevation trigger active despite the sharp price move. The framework provides no exception for steep corrections. Disciplined accumulation continued at base rate on schedule.", impact:"+0.0073 \u20bf", live:false },
-  { year: '2026', date:"Mar '26", price:"$71.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Bull Run phase continues. Base rate maintained.", impact:"+0.006999 \u20bf", live:false },
-  { year: '2026', date:"Apr '26", price:"$74k", tag:"milestone", tl:"Milestone", action:"Final month of Bull Run phase. Base rate maintained.", reasoning:"0.0866 BTC accumulated through disciplined DCA from January 2025. Hardware wallet custody confirmed. Succession documentation complete. Last month before the framework enters Post-Peak Correction (month 25) and the Cycle Phase multiplier activates.", impact:"~0.0866 \u20bf held", live:false },
-  { year: '2026', date:"May '26", price:"$78.9k", tag:"dca", tl:"DCA", action:"First month of Post-Peak Correction. Cycle Phase multiplier (2.0x) activates. $1,000 deployed.", reasoning:"Month 25 post-halving. DCA signal: Post-Peak Correction phase (2.0x base), no floor-zone adjustment this month. The framework's structural window for elevated accumulation begins.", impact:"+0.01267 \u20bf", live:false },
-  { year: '2026', date:"Jun '26", price:"$66.5k", tag:"dca", tl:"DCA", action:"Both triggers active: Post-Peak Correction (2.0x) + Power Law floor adjustment (+0.8x) = 2.8x. $1,400 deployed.", reasoning:"Price moved within 8% of the calculated power law floor for the first time since the operation began \u2014 a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading. No discretionary action taken, the framework's response is mechanical: the floor-zone multiplier engages automatically based on the 8% threshold.", impact:"+0.021 \u20bf", live:true },
-  { year: '2026', date:"Jul '26", price:"$64.9k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, second consecutive month. $1,400 deployed.", reasoning:"Floor $60,753 \u2014 price sat 6.83% above it, still inside the 8% band. Both triggers remain active. The multiplier is evaluated fresh at each execution based on price's position relative to the 8% band at that time, not a one-time signal.", impact:"+0.021572 \u20bf", live:true },
-  { year: '2026', date:"Aug '26", price:"$63.1k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, third consecutive month. $1,400 deployed.", reasoning:"Floor $62,492 \u2014 price sat just 0.97% above it, comfortably inside the 8% band. Three consecutive elevated executions. The framework has no mechanism for fatigue \u2014 it only sizes according to the zone that prevails on the day.", impact:"+0.022187 \u20bf", live:true },
-  { year: '2026', date:"Sep '26", price:"$76.6k", tag:"dca", tl:"DCA", action:"Price clears the 8% floor band. Floor-zone adjustment drops away, 2.0x Cycle Phase multiplier remains. $1,000 deployed.", reasoning:"Floor $64,272 \u2014 price sat roughly 19% above it, well outside the 8% band, so no floor-zone adjustment applied. The Cycle Phase multiplier (2.0x) remains active as a calendar trigger, independent of price. The step down is as mechanical as the step up was in June.", impact:"+0.013055 \u20bf", live:true },
+  { year: '2025', date:"Jan '25", price:"$97k", tag:"dca", tl:"DCA", action:"First DCA purchase at $97,000. Strategy: accumulate, hold, no complexity.", reasoning:"Strategy begins below the January ATH of $109k. One rule: buy $500 on the 15th, every month. No timing, no forecast. Hold in exchange custody until 0.05 BTC threshold reached for hardware wallet migration.", impact:"+0.005154 \u20bf", live:false, usd:500, btc:0.005154 },
+  { year: '2025', date:"Feb '25", price:"$97.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule. Base rate, no deviation.", reasoning:"Lower prices mean more sats for the same fiat when they come. Pausing DCA during a drawdown is the most common and most costly mistake a long-term accumulator makes.", impact:"+0.00512 \u20bf", live:false, usd:500, btc:0.00512 },
+  { year: '2025', date:"Mar '25", price:"$83.7k", tag:"dca", tl:"DCA", action:"Price corrects 14% from February. DCA executed without hesitation.", reasoning:"Base rate maintained through the pullback. The framework does not react to single-month drawdowns, it reacts to structural conditions.", impact:"+0.005974 \u20bf", live:false, usd:500, btc:0.005974 },
+  { year: '2025', date:"Apr '25", price:"$83.6k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Consolidation continues. Base rate maintained.", impact:"+0.00598 \u20bf", live:false, usd:500, btc:0.00598 },
+  { year: '2025', date:"May '25", price:"$101.7k", tag:"dca", tl:"DCA", action:"Price recovers above $100k. Base rate maintained.", reasoning:"No change in posture on the way back up. The framework's discipline runs both directions.", impact:"+0.00492 \u20bf", live:false, usd:500, btc:0.00492 },
+  { year: '2025', date:"Jun '25", price:"$104.9k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained.", impact:"+0.004766 \u20bf", live:false, usd:500, btc:0.004766 },
+  { year: '2025', date:"Jul '25", price:"$117.4k", tag:"strategy", tl:"Strategy", action:"Cycle ATH approached. Framework assessed at elevated prices.", reasoning:"With price approaching ATH territory, the framework was used to assess conditions. The decision: maintain accumulation discipline at base rate. No deviation from the DCA plan.", impact:"+0.004269 \u20bf", live:false, usd:500, btc:0.004269 },
+  { year: '2025', date:"Aug '25", price:"$117k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained near cycle highs.", impact:"+0.004274 \u20bf", live:false, usd:500, btc:0.004274 },
+  { year: '2025', date:"Sep '25", price:"$114.9k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Base rate maintained.", impact:"+0.00435 \u20bf", live:false, usd:500, btc:0.00435 },
+  { year: '2025', date:"Oct '25", price:"$111k", tag:"milestone", tl:"Milestone", action:"Cycle ATH of $126,198 reached this month. Framework holds. No sell.", reasoning:"At the all-time high the temptation to deviate from the plan is at its strongest. Decision: continue base DCA exactly as documented. The pull to time an exit is genuine and documented here. The framework held at the hardest moment, which is the entire point of having one.", impact:"~0.0493 \u20bf total", live:false, usd:500, btc:0.0045 },
+  { year: '2025', date:"Nov '25", price:"$94.8k", tag:"custody", tl:"Custody", action:"Stack reaches 0.05 BTC. Hardware wallet purchased. Full self-custody secured.", reasoning:"Custody milestone reached. Stack migrated from exchange to hardware wallet. Seed phrase secured in two physical locations. Passphrase set. Succession documentation initiated. Not your keys, not your coins.", impact:"~0.0546 \u20bf secured", live:false, usd:500, btc:0.00527 },
+  { year: '2025', date:"Dec '25", price:"$87k", tag:"strategy", tl:"Strategy", action:"Correction deepens, 30% below the October ATH. Base rate maintained.", reasoning:"The DCA signal was reviewed: still inside Bull Run phase, no elevation triggered. Decision: continue disciplined accumulation. The framework held through the correction as designed.", impact:"+0.00575 \u20bf", live:false, usd:500, btc:0.00575 },
+  { year: '2026', date:"Jan '26", price:"$95.6k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Bull Run phase (month 20.9 post-halving). No elevation trigger active. Base DCA executed on schedule, on the 15th, regardless of the broader correction underway.", impact:"+0.00523 \u20bf", live:false, usd:500, btc:0.00523 },
+  { year: '2026', date:"Feb '26", price:"$68.5k", tag:"risk", tl:"Correction low", action:"Price falls sharply. DCA executed without deviation, still at base rate.", reasoning:"Bull Run phase (month 21.9), still no elevation trigger active despite the sharp price move. The framework provides no exception for steep corrections. Disciplined accumulation continued at base rate on schedule.", impact:"+0.0073 \u20bf", live:false, usd:500, btc:0.0073 },
+  { year: '2026', date:"Mar '26", price:"$71.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule at base rate.", reasoning:"Bull Run phase continues. Base rate maintained.", impact:"+0.006999 \u20bf", live:false, usd:500, btc:0.006999 },
+  { year: '2026', date:"Apr '26", price:"$74k", tag:"milestone", tl:"Milestone", action:"Final month of Bull Run phase. Base rate maintained.", reasoning:"0.0866 BTC accumulated through disciplined DCA from January 2025. Hardware wallet custody confirmed. Succession documentation complete. Last month before the framework enters Post-Peak Correction (month 25) and the Cycle Phase multiplier activates.", impact:"~0.0866 \u20bf held", live:false, usd:500, btc:0.00676 },
+  { year: '2026', date:"May '26", price:"$78.9k", tag:"dca", tl:"DCA", action:"First month of Post-Peak Correction. Cycle Phase multiplier (2.0x) activates. $1,000 deployed.", reasoning:"Month 25 post-halving. DCA signal: Post-Peak Correction phase (2.0x base), no floor-zone adjustment this month. The framework's structural window for elevated accumulation begins.", impact:"+0.01267 \u20bf", live:false, usd:1000, btc:0.01267 },
+  { year: '2026', date:"Jun '26", price:"$66.5k", tag:"dca", tl:"DCA", action:"Both triggers active: Post-Peak Correction (2.0x) + Power Law floor adjustment (+0.8x) = 2.8x. $1,400 deployed.", reasoning:"Price moved within 8% of the calculated power law floor for the first time since the operation began \u2014 a notable condition the three-tier multiplier system weights more heavily than a standard lower-zone reading. No discretionary action taken, the framework's response is mechanical: the floor-zone multiplier engages automatically based on the 8% threshold.", impact:"+0.021 \u20bf", live:true, usd:1400, btc:0.021 },
+  { year: '2026', date:"Jul '26", price:"$64.9k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, second consecutive month. $1,400 deployed.", reasoning:"Floor $60,691 \u2014 price sat 6.94% above it, still inside the 8% band. Both triggers remain active. The multiplier is evaluated fresh at each execution based on price's position relative to the 8% band at that time, not a one-time signal.", impact:"+0.021572 \u20bf", live:true, usd:1400, btc:0.021572 },
+  { year: '2026', date:"Aug '26", price:"$63.1k", tag:"dca", tl:"DCA", action:"2.8x multiplier held, third consecutive month. $1,400 deployed.", reasoning:"Floor $62,429 \u2014 price sat just 1.08% above it, comfortably inside the 8% band. Three consecutive elevated executions. The framework has no mechanism for fatigue \u2014 it only sizes according to the zone that prevails on the day.", impact:"+0.022187 \u20bf", live:true, usd:1400, btc:0.022187 },
+  { year: '2026', date:"Sep '26", price:"$76.6k", tag:"dca", tl:"DCA", action:"Price clears the 8% floor band. Floor-zone adjustment drops away, 2.0x Cycle Phase multiplier remains. $1,000 deployed.", reasoning:"Floor $64,208 \u2014 price sat roughly 19% above it, well outside the 8% band, so no floor-zone adjustment applied. The Cycle Phase multiplier (2.0x) remains active as a calendar trigger, independent of price. The step down is as mechanical as the step up was in June.", impact:"+0.013055 \u20bf", live:true, usd:1000, btc:0.013055 },
 ];
 
 function buildLog() {
@@ -2152,13 +2152,22 @@ function toggleReasoning(cell) {
 
 buildLog();
 
-// Month labels and execution prices come straight from the decision log, so a new
-// LOG_ENTRIES row extends them automatically. btcActual, costBasis and plCeil below
-// still need one value appended per new entry.
+// Every series below is derived from LOG_ENTRIES except plCeil, which needs one value
+// appended per new entry.
 const months = LOG_ENTRIES.map(e => e.date);
 const prices = LOG_ENTRIES.map(e => Math.round(parseFloat(e.price.replace(/[$,k]/g, '')) * 1000));
-const btcActual = [0.005154,0.010274,0.016248,0.022228,0.027148,0.031914,0.036183,0.040457,0.044807,0.049307,0.054577,0.060327,0.065557,0.072857,0.079856,0.086616,0.099286,0.120286,0.141858,0.164045,0.1771];
-const costBasis = [97012,97333,92319,89977,92088,94003,96731,98870,100431,101405,100775,99458,99150,96079,93919,92362,90647,86461,83182,80466,80183];
+// Cumulative BTC held and running average cost basis, computed from each entry's btc and usd.
+// The BTC total is rounded to 6 dp at each step so it matches the precision the entries are logged in.
+const btcActual = [];
+const costBasis = [];
+LOG_ENTRIES.reduce((acc, e) => {
+  acc.btc = Math.round((acc.btc + e.btc) * 1e6) / 1e6;
+  acc.usd += e.usd;
+  btcActual.push(acc.btc);
+  costBasis.push(Math.round(acc.usd / acc.btc));
+  return acc;
+}, { btc: 0, usd: 0 });
+// Power-law ceiling per logged month. Not formula-driven: extend by one value per new entry (see CLAUDE.md).
 const plCeil =  [131000,135000,139000,142900,146900,151200,155900,160200,164900,169900,174600,179600,185000,190400,195800,201200,207000,212800,218900,225000,231500];
 
 // --- Power law floor and midpoint, computed from the validated formula rather than
@@ -2408,13 +2417,13 @@ document.getElementById('stat-cycle').textContent=Math.round((TODAY-HALVING_DATE
 const CYCLE_PHASE_END = new Date('2027-04-20');
 
 // --- Live price, current value, and P&L (static facts updated monthly at each DCA) ---
-// BTC_HELD carries the unrounded running total (0.16404 + 0.013055); it displays as 0.17709.
-const BTC_HELD = 0.177095;
-const TOTAL_FIAT_DEPLOYED = 14200;
+// Position totals, derived from the decision log
+const BTC_HELD = btcActual[btcActual.length - 1];
+const TOTAL_FIAT_DEPLOYED = LOG_ENTRIES.reduce((sum, e) => sum + e.usd, 0);
 
 // Hero and KPI position figures are derived from BTC_HELD and TOTAL_FIAT_DEPLOYED,
 // so updating those two constants at each DCA updates every display.
-function formatBtc(v) { return (Math.floor(v * 1e5) / 1e5).toFixed(5) + ' \u20bf'; }
+function formatBtc(v) { return (Math.floor(Math.round(v * 1e6) / 10) / 1e5).toFixed(5) + ' \u20bf'; }
 function formatUsd(v) { return '$' + Math.round(v).toLocaleString('en-US'); }
 (function renderPositionFigures() {
   const avgCost = TOTAL_FIAT_DEPLOYED / BTC_HELD;
