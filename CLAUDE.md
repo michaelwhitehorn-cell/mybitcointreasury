@@ -28,27 +28,17 @@ Static single-page site for www.mybitcointreasury.finance. Everything lives in `
 | `usd` | `1000` | fiat deployed |
 | `btc` | `0.013055` | BTC acquired, 6 dp |
 
-Derived from it automatically: chart months and prices, cumulative BTC (`btcActual`), running cost basis (`costBasis`), `BTC_HELD`, `TOTAL_FIAT_DEPLOYED`, average cost, the hero and KPI figures, current value and P&L, the log entry count, floor and midpoint series, and the live line position.
+Derived from it automatically: chart months and prices, cumulative BTC (`btcActual`), running cost basis (`costBasis`), `BTC_HELD`, `TOTAL_FIAT_DEPLOYED`, average cost, the hero and KPI figures, current value and P&L, the log entry count, the power-law floor, midpoint and ceiling series, and the live line position.
 
-Not derived: `plCeil`, the power-law ceiling. It is a hand-maintained list (no formula reproduces its values), extended by one value per month as described below. `projectionLow` / `projectionHigh` (the shaded 2030 range) are published once and never revised.
+The power-law series are pure date math for the 15th of each logged month (plus today for the "Now" point): `calculatePowerLawFloor`, `calculatePowerLawMidpoint` and `calculatePowerLawCeiling`. The ceiling is its own power law (`PL_CEIL_*` constants, fitted to two Bitbo "Resistance" readings), not a multiple of the midpoint. The Power Law chart tab uses a logarithmic y-axis (20k to 1M).
+
+Not derived: `projectionLow` / `projectionHigh` (the shaded 2030 range) are published once and never revised.
 
 ## Monthly update procedure
 
-1. **Append one object to the end of `LOG_ENTRIES`** with every field above. `live: true`; `usd` = fiat deployed; `btc` = BTC acquired to 6 dp; `price` = open/low midpoint in `$NN.Nk` form. If the reasoning quotes a floor, take it from the formula for the 15th of that month (see the snippet below).
-2. **Append one value to `plCeil`.** Rule: the formula midpoint for the 15th of the new month, multiplied by the average ceiling/midpoint ratio of the previous 8 months, rounded to the nearest $100. To get it, add the new entry first, open the page, and run this in the browser console:
-
-   ```js
-   (() => {
-     const n = LOG_ENTRIES.length - 1;                       // index of the new month
-     const mid = i => calculatePowerLawMidpoint(new Date(2025, i, 15));
-     const k = [1, 2, 3, 4, 5, 6, 7, 8].map(j => plCeil[n - j] / mid(n - j)).reduce((a, b) => a + b) / 8;
-     return Math.round(mid(n) * k / 100) * 100;
-   })()
-   ```
-
-   Floor for a quoted figure: `Math.round(calculatePowerLawFloor(new Date(2025, LOG_ENTRIES.length - 1, 15)))`.
-3. Nothing else needs editing for the numbers. Optionally refresh copy that names the latest execution: the dashboard note under the signal cards, and the hero "latest issue" callout and newsletter preview when a new issue goes out.
-4. Verify in a browser (see below): the log count goes up by one, the new row is highlighted live, every chart shows the new month, and the hero/KPI figures match the new totals.
+1. **Append one object to the end of `LOG_ENTRIES`** with every field above. `live: true`; `usd` = fiat deployed; `btc` = BTC acquired to 6 dp; `price` = open/low midpoint in `$NN.Nk` form. If the reasoning quotes a floor, take it from the formula for the 15th of that month: add the entry, open the page and run `Math.round(calculatePowerLawFloor(new Date(2025, LOG_ENTRIES.length - 1, 15)))` in the browser console.
+2. Nothing else needs editing for the numbers: every series, including the power-law floor, midpoint and ceiling, extends itself. Optionally refresh copy that names the latest execution: the dashboard note under the signal cards, and the hero "latest issue" callout and newsletter preview when a new issue goes out.
+3. Verify in a browser (see below): the log count goes up by one, the new row is highlighted live, every chart shows the new month, and the hero/KPI figures match the new totals.
 
 ## Verifying changes
 
