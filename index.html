@@ -2045,25 +2045,9 @@ section.full { max-width: none; padding: 0; }
     <button class="modal-close" onclick="closeSubModal()"><i class="ti ti-x"></i></button>
     <div class="modal-title">Subscribe to the operation</div>
     <div class="modal-sub">The Fortnightly newsletter in full, early notification of upcoming decision points, and the operators manual. A documented Bitcoin treasury operation delivered directly to your inbox.</div>
-    <div class="pricing-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;">
-      <a href="https://buy.stripe.com/cNiaEW7mx6oXfyEdD0es000" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:2px solid var(--btc);background:var(--btc-glow);border-radius:var(--radius-lg);padding:1rem;text-align:center;position:relative;">
-        <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--btc);color:#0a0a0c;font-size:9px;font-weight:700;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;white-space:nowrap;">FIRST 200 ONLY</div>
-        <div style="font-family:var(--font-mono);font-size:11px;color:var(--btc);margin-bottom:4px;font-weight:600;margin-top:4px;">Foundation</div>
-        <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$195</div>
-        <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">one-off &middot; to Dec 2029</div>
-      </a>
-      <a href="https://buy.stripe.com/aFa5kC8qB00z7280Qees001" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
-        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600;">Annual</div>
-        <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$159</div>
-        <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">per year</div>
-      </a>
-      <a href="https://buy.stripe.com/00w6oG8qB7t19ag0Qees002" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;">
-        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:600;">Monthly</div>
-        <div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">$19</div>
-        <div style="font-size:10.5px;color:var(--text3);margin-top:3px;">per month</div>
-      </a>
-    </div>
-    <p style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1rem;">Foundation is a one-off payment, limited to the first 200 subscribers, covering access through to December 2029. Annual and Monthly are ongoing subscriptions, cancel any time. All payments processed securely via Stripe.</p>
+    <!-- Tiles and note are rendered by renderPricingTiles() from PRICING_TIERS (see DWG_OFFER_MODE) -->
+    <div class="pricing-grid" id="pricingTiles" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.25rem;"></div>
+    <p id="pricingNote" style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:1rem;"></p>
     <p style="font-size:11px;color:var(--text3);margin-top:0.75rem;line-height:1.5;">This subscription covers Bitcoin treasury education and documented operational content only. It does not constitute financial advice.</p>
   </div>
 </div>
@@ -2108,6 +2092,9 @@ section.full { max-width: none; padding: 0; }
 </footer>
 
 <script>
+// TEMPORARY: DWG launch offer. true = show only the Annual tile (first 50). Set to false to restore all three tiers.
+const DWG_OFFER_MODE = true;
+
 const LOG_ENTRIES = [
   { year: '2025', date:"Jan '25", price:"$97k", tag:"dca", tl:"DCA", action:"First DCA purchase at $97,000. Strategy: accumulate, hold, no complexity.", reasoning:"Strategy begins below the January ATH of $109k. One rule: buy $500 on the 15th, every month. No timing, no forecast. Hold in exchange custody until 0.05 BTC threshold reached for hardware wallet migration.", impact:"+0.005154 \u20bf", live:false, usd:500, btc:0.005154 },
   { year: '2025', date:"Feb '25", price:"$97.5k", tag:"dca", tl:"DCA", action:"DCA executed on schedule. Base rate, no deviation.", reasoning:"Lower prices mean more sats for the same fiat when they come. Pausing DCA during a drawdown is the most common and most costly mistake a long-term accumulator makes.", impact:"+0.00512 \u20bf", live:false, usd:500, btc:0.00512 },
@@ -2421,6 +2408,45 @@ const obs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
 },{threshold:0.08});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// --- Subscription tiers (rendered into the pricing modal) ---
+// All three tiers stay defined; DWG_OFFER_MODE decides which are rendered.
+const PRICING_TIERS = [
+  { name: 'Foundation', price: '$195', term: 'one-off &middot; to Dec 2029', url: 'https://buy.stripe.com/cNiaEW7mx6oXfyEdD0es000', badge: 'FIRST 200 ONLY' },
+  { name: 'Annual',     price: '$159', term: 'per year',                     url: 'https://buy.stripe.com/aFa5kC8qB00z7280Qees001' },
+  { name: 'Monthly',    price: '$19',  term: 'per month',                    url: 'https://buy.stripe.com/00w6oG8qB7t19ag0Qees002' }
+];
+const PRICING_NOTE = 'Foundation is a one-off payment, limited to the first 200 subscribers, covering access through to December 2029. Annual and Monthly are ongoing subscriptions, cancel any time. All payments processed securely via Stripe.';
+const DWG_OFFER_BADGE = 'FIRST 50 ONLY';
+const DWG_OFFER_NOTE = 'Annual subscription, limited to the first 50 subscribers. Cancel any time. All payments processed securely via Stripe.';
+
+// A tile with a badge gets the highlighted treatment (orange border and glow)
+function pricingTileHtml(t) {
+  const box = t.badge
+    ? 'border:2px solid var(--btc);background:var(--btc-glow);border-radius:var(--radius-lg);padding:1rem;text-align:center;position:relative;'
+    : 'border:1px solid var(--border);background:var(--surface2);border-radius:var(--radius-lg);padding:1rem;text-align:center;';
+  return '<a href="' + t.url + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;' + box + '">'
+    + (t.badge ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--btc);color:#0a0a0c;font-size:9px;font-weight:700;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;white-space:nowrap;">' + t.badge + '</div>' : '')
+    + '<div style="font-family:var(--font-mono);font-size:11px;color:' + (t.badge ? 'var(--btc)' : 'var(--text3)') + ';margin-bottom:4px;font-weight:600;' + (t.badge ? 'margin-top:4px;' : '') + '">' + t.name + '</div>'
+    + '<div style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--text);line-height:1;">' + t.price + '</div>'
+    + '<div style="font-size:10.5px;color:var(--text3);margin-top:3px;">' + t.term + '</div>'
+    + '</a>';
+}
+
+(function renderPricingTiles() {
+  const grid = document.getElementById('pricingTiles');
+  const tiles = DWG_OFFER_MODE
+    ? [Object.assign({}, PRICING_TIERS.find(t => t.name === 'Annual'), { badge: DWG_OFFER_BADGE })]
+    : PRICING_TIERS;
+  grid.innerHTML = tiles.map(pricingTileHtml).join('');
+  if (DWG_OFFER_MODE) {
+    // One tile: a single centred column rather than a third of the three-column grid
+    grid.style.gridTemplateColumns = '1fr';
+    grid.style.maxWidth = '260px';
+    grid.style.margin = '0 auto 1.25rem';
+  }
+  document.getElementById('pricingNote').innerHTML = DWG_OFFER_MODE ? DWG_OFFER_NOTE : PRICING_NOTE;
+})();
 
 // Remember which control opened the subscription modal so focus can return to it.
 // A capturing click listener is used because Safari does not focus links/buttons on click.
