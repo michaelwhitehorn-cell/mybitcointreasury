@@ -1386,6 +1386,7 @@ section.full { max-width: none; padding: 0; }
   .inflection-grid { grid-template-columns: 1fr; }
   .convergence-grid { grid-template-columns: 1fr; }
   .kpi-row { grid-template-columns: repeat(2, 1fr) !important; }
+  .kpi-row > .kpi:last-child { grid-column: 1 / -1; }
   .signal-row { grid-template-columns: 1fr; }
   .nav-hamburger { display: block; }
   .nav-links {
@@ -2262,11 +2263,14 @@ const liveLinePlugin = {
 // so each new LOG_ENTRIES purchase gets its dot automatically.
 const DCA_BASE_USD = 500;
 const DCA_TIERS = [
-  { multiplier: 1.0, label: 'Base rate',                       color: '#9A9490', radius: 3 },
-  { multiplier: 1.8, label: 'Floor zone 1.8x',                 color: '#2DD4BF', radius: 5 },
-  { multiplier: 2.0, label: 'Cycle phase 2.0x',                color: '#A78BFA', radius: 5 },
-  { multiplier: 2.8, label: 'Cycle phase and floor zone 2.8x', color: '#F472B6', radius: 7 }
+  { multiplier: 1.0, label: 'Base rate',                       color: '#9A9490', radius: 3, radiusNarrow: 2 },
+  { multiplier: 1.8, label: 'Floor zone 1.8x',                 color: '#2DD4BF', radius: 5, radiusNarrow: 3.5 },
+  { multiplier: 2.0, label: 'Cycle phase 2.0x',                color: '#A78BFA', radius: 5, radiusNarrow: 3.5 },
+  { multiplier: 2.8, label: 'Cycle phase and floor zone 2.8x', color: '#F472B6', radius: 7, radiusNarrow: 4.5 }
 ];
+// Charts narrower than this (the chart's own width, not the screen) use the smaller radii so
+// neighbouring dots don't overlap. Chart.js re-resolves these options on every resize/rotation.
+const DCA_NARROW_CHART_WIDTH = 480;
 const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 // Tier for a chart month label ("Sep '26"), matched to the log entry by year and month.
@@ -2283,10 +2287,11 @@ function dcaTierForMonth(label) {
 // Scriptable point options for the BTC price dataset. Months without a purchase keep the
 // line's previous point styling (radius 0, Chart.js defaults on hover).
 const tierAt = ctx => dcaTierForMonth(ctx.chart.data.labels[ctx.dataIndex]);
+const dotRadius = (t, ctx) => ctx.chart.width < DCA_NARROW_CHART_WIDTH ? t.radiusNarrow : t.radius;
 const DCA_POINT_OPTIONS = {
   dcaMarkers: true,
-  pointRadius: ctx => { const t = tierAt(ctx); return t ? t.radius : 0; },
-  pointHoverRadius: ctx => { const t = tierAt(ctx); return t ? t.radius + 2 : 4; },
+  pointRadius: ctx => { const t = tierAt(ctx); return t ? dotRadius(t, ctx) : 0; },
+  pointHoverRadius: ctx => { const t = tierAt(ctx); return t ? dotRadius(t, ctx) + 2 : 4; },
   pointBackgroundColor: ctx => { const t = tierAt(ctx); return t ? t.color : (ctx.dataset.backgroundColor || Chart.defaults.backgroundColor); },
   pointBorderColor: ctx => tierAt(ctx) ? '#111' : ctx.dataset.borderColor,
   pointBorderWidth: ctx => tierAt(ctx) ? 1.5 : ctx.dataset.borderWidth
