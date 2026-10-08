@@ -933,6 +933,20 @@ section.full { max-width: none; padding: 0; }
   width: 16px; height: 0;
   flex-shrink: 0;
 }
+.legend-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 1.25rem;
+  flex-basis: 100%;
+}
+.legend-group-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
 
 /* SIGNAL ROW */
 .signal-row {
@@ -2243,6 +2257,41 @@ const liveLinePlugin = {
   }
 };
 
+// --- DCA purchase markers: one dot per logged purchase on the BTC price line ---
+// The tier comes from the amount deployed (usd / base amount), never from hardcoded months,
+// so each new LOG_ENTRIES purchase gets its dot automatically.
+const DCA_BASE_USD = 500;
+const DCA_TIERS = [
+  { multiplier: 1.0, label: 'Base rate',                       color: '#9A9490', radius: 3 },
+  { multiplier: 1.8, label: 'Floor zone 1.8x',                 color: '#2DD4BF', radius: 5 },
+  { multiplier: 2.0, label: 'Cycle phase 2.0x',                color: '#A78BFA', radius: 5 },
+  { multiplier: 2.8, label: 'Cycle phase and floor zone 2.8x', color: '#F472B6', radius: 7 }
+];
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Tier for a chart month label ("Sep '26"), matched to the log entry by year and month.
+// Returns null for the live "Now" point or any month without a logged purchase.
+function dcaTierForMonth(label) {
+  const m = /^([A-Z][a-z]{2}) '(\d{2})$/.exec(label || '');
+  if (!m || MONTH_ABBR.indexOf(m[1]) < 0) return null;
+  const entry = LOG_ENTRIES.find(e => e.year === '20' + m[2] && e.date.slice(0, 3) === m[1]);
+  if (!entry || !entry.usd) return null;
+  const multiplier = entry.usd / DCA_BASE_USD;
+  return DCA_TIERS.find(t => Math.abs(t.multiplier - multiplier) < 1e-9) || null;
+}
+
+// Scriptable point options for the BTC price dataset. Months without a purchase keep the
+// line's previous point styling (radius 0, Chart.js defaults on hover).
+const tierAt = ctx => dcaTierForMonth(ctx.chart.data.labels[ctx.dataIndex]);
+const DCA_POINT_OPTIONS = {
+  dcaMarkers: true,
+  pointRadius: ctx => { const t = tierAt(ctx); return t ? t.radius : 0; },
+  pointHoverRadius: ctx => { const t = tierAt(ctx); return t ? t.radius + 2 : 4; },
+  pointBackgroundColor: ctx => { const t = tierAt(ctx); return t ? t.color : (ctx.dataset.backgroundColor || Chart.defaults.backgroundColor); },
+  pointBorderColor: ctx => tierAt(ctx) ? '#111' : ctx.dataset.borderColor,
+  pointBorderWidth: ctx => tierAt(ctx) ? 1.5 : ctx.dataset.borderWidth
+};
+
 const chartDefs = {
   accumulation: {
     labels: monthsExtended,
@@ -2256,7 +2305,7 @@ const chartDefs = {
   },
   price: {
     datasets:[
-      {label:'BTC price',data:prices,borderColor:'#F7931A',backgroundColor:'rgba(247,147,26,0.05)',borderWidth:2,fill:true,tension:0.3,pointRadius:0,yAxisID:'y'},
+      Object.assign({label:'BTC price',data:prices,borderColor:'#F7931A',backgroundColor:'rgba(247,147,26,0.05)',borderWidth:2,fill:true,tension:0.3,yAxisID:'y'}, DCA_POINT_OPTIONS),
       {label:'Cost basis',data:costBasis,borderColor:'#60A5FA',borderWidth:1.5,borderDash:[5,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'}
     ],
     fmt: v => '$'+Math.round(v/1000)+'k',
@@ -2264,7 +2313,7 @@ const chartDefs = {
   },
   powerlaw: {
     datasets:[
-      {label:'BTC price',data:prices,borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,pointRadius:0,yAxisID:'y'},
+      Object.assign({label:'BTC price',data:prices,borderColor:'#F7931A',borderWidth:2,fill:false,tension:0.3,yAxisID:'y'}, DCA_POINT_OPTIONS),
       {label:'Midpoint',data:plMid,borderColor:'#22C55E',borderWidth:1.5,borderDash:[5,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'},
       {label:'Floor',data:plFloor,borderColor:'#60A5FA',borderWidth:1,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'},
       {label:'Ceiling',data:plCeil,borderColor:'#EF4444',borderWidth:1,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'}
@@ -2278,8 +2327,8 @@ const chartDefs = {
 
 const chartCaptions = {
   accumulation: "Real BTC held over time, plus a shaded projected range through 2030 — derived from the DCA framework's own rules and the power law corridor shown on the Power Law tab, not a single price forecast. Illustrative only, not revised once published.",
-  price: "What was actually paid per BTC on each purchase, tracked against the running average cost basis over time.",
-  powerlaw: "Where price sits against the calculated power law floor, midpoint, and ceiling — the same corridor the DCA multiplier reacts to."
+  price: "What was actually paid per BTC on each purchase, tracked against the running average cost basis over time. Dots on the price line show the DCA multiplier in effect each month.",
+  powerlaw: "Where price sits against the calculated power law floor, midpoint and ceiling. Dots on the price line mark each monthly purchase, coloured and sized by the DCA multiplier in effect."
 };
 
 function showChartUnavailable() {
@@ -2328,7 +2377,13 @@ function renderChart(type) {
           titleColor:'#9A9490',bodyColor:'#F0EDE8',
           titleFont:{family:'JetBrains Mono',size:10},
           bodyFont:{family:'JetBrains Mono',size:11},
-          callbacks:{label:c=>' '+c.dataset.label+': '+def.fmt(c.parsed.y)}
+          callbacks:{
+            label:c=>' '+c.dataset.label+': '+def.fmt(c.parsed.y),
+            labelColor:function(c){
+              if (!c.dataset.dcaMarkers) return Chart.defaults.plugins.tooltip.callbacks.labelColor.call(this, c);
+              return {borderColor:c.dataset.borderColor, backgroundColor:c.dataset.backgroundColor || Chart.defaults.backgroundColor, borderWidth:c.dataset.borderWidth, borderDash:undefined, borderDashOffset:undefined, borderRadius:0};
+            }
+          }
         }
       },
       scales:{
@@ -2340,7 +2395,11 @@ function renderChart(type) {
     }
   });
   const el = document.getElementById('chartLegend');
-  el.innerHTML = def.legend.map(i=>'<div class="legend-item"><div class="legend-line" style="border-top:2px '+(i.d?'dashed':'solid')+' '+i.c+'"></div>'+i.l+'</div>').join('');
+  el.innerHTML = def.legend.map(i=>'<div class="legend-item"><div class="legend-line" style="border-top:2px '+(i.d?'dashed':'solid')+' '+i.c+'"></div>'+i.l+'</div>').join('')
+    + (def.datasets.some(d => d.dcaMarkers)
+      ? '<div class="legend-group"><span class="legend-group-label">DCA multiplier</span>' + DCA_TIERS.map(t =>
+          '<div class="legend-item"><div class="legend-dot" style="width:'+(t.radius*2)+'px;height:'+(t.radius*2)+'px;background:'+t.color+'"></div>'+t.label+'</div>').join('') + '</div>'
+      : '');
 }
 
 switchChart('accumulation');
