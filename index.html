@@ -2152,8 +2152,8 @@ function toggleReasoning(cell) {
 
 buildLog();
 
-// Every series below is derived from LOG_ENTRIES except plCeil, which needs one value
-// appended per new entry.
+// Month labels, prices and position series are derived from LOG_ENTRIES; the power-law
+// floor, midpoint and ceiling below are computed from each month's date.
 const months = LOG_ENTRIES.map(e => e.date);
 const prices = LOG_ENTRIES.map(e => Math.round(parseFloat(e.price.replace(/[$,k]/g, '')) * 1000));
 // Cumulative BTC held and running average cost basis, computed from each entry's btc and usd.
@@ -2167,8 +2167,6 @@ LOG_ENTRIES.reduce((acc, e) => {
   costBasis.push(Math.round(acc.usd / acc.btc));
   return acc;
 }, { btc: 0, usd: 0 });
-// Power-law ceiling per logged month. Not formula-driven: extend by one value per new entry (see CLAUDE.md).
-const plCeil =  [131000,135000,139000,142900,146900,151200,155900,160200,164900,169900,174600,179600,185000,190400,195800,201200,207000,212800,218900,225000,231500];
 
 // --- Power law floor and midpoint, computed from the validated formula rather than
 // static/interpolated estimates. Genuinely self-updating for any date. ---
@@ -2185,21 +2183,33 @@ function calculatePowerLawFloor(date) {
   return calculatePowerLawMidpoint(date) * PL_FLOOR_RATIO;
 }
 
+// Ceiling: its own power law (own exponent, not a fixed multiple of the midpoint), derived from
+// two Bitbo "Resistance" readings: 1 Jan 2022 = 133,142 and 1 Jan 2028 = 897,271.
+const PL_CEIL_REF_PRICE = 897271;      // Bitbo resistance on 1 Jan 2028
+const PL_CEIL_REF_DAYS = 6937;         // days from genesis to 1 Jan 2028
+const PL_CEIL_EXPONENT = 5.02662367;   // ln(897271 / 133142) / ln(6937 / 4746)
+
+function calculatePowerLawCeiling(date) {
+  const daysSinceGenesis = Math.round((date - GENESIS_BLOCK) / 86400000);
+  return PL_CEIL_REF_PRICE * Math.pow(daysSinceGenesis / PL_CEIL_REF_DAYS, PL_CEIL_EXPONENT);
+}
+
 // One date per logged month (15th, matching the DCA schedule), starting Jan 2025 with the first log entry
 const chartMonthDates = months.map((_, i) => new Date(2025, i, 15));
 
 const plFloor = chartMonthDates.map(d => Math.round(calculatePowerLawFloor(d)));
 const plMid = chartMonthDates.map(d => Math.round(calculatePowerLawMidpoint(d)));
+const plCeil = chartMonthDates.map(d => Math.round(calculatePowerLawCeiling(d)));
 
 // One extra "live" point appended to the historical series, representing today rather
 // than a completed calendar month. Price starts null and is filled in once the live
-// fetch resolves; floor/midpoint are pure date math so compute immediately.
+// fetch resolves; floor/midpoint/ceiling are pure date math so compute immediately.
 months.push('Now');
 prices.push(null);
 costBasis.push(costBasis[costBasis.length - 1]); // static fact, unchanged since last DCA
 plFloor.push(Math.round(calculatePowerLawFloor(new Date())));
 plMid.push(Math.round(calculatePowerLawMidpoint(new Date())));
-plCeil.push(Math.round(plCeil[plCeil.length - 1] * (plCeil[plCeil.length - 1] / plCeil[plCeil.length - 2])));
+plCeil.push(Math.round(calculatePowerLawCeiling(new Date())));
 
 const monthsExtended = ["Jan '25", "Feb '25", "Mar '25", "Apr '25", "May '25", "Jun '25", "Jul '25", "Aug '25", "Sep '25", "Oct '25", "Nov '25", "Dec '25", "Jan '26", "Feb '26", "Mar '26", "Apr '26", "May '26", "Jun '26", "Jul '26", "Aug '26", "Sep '26", "Oct '26", "Nov '26", "Dec '26", "Jan '27", "Feb '27", "Mar '27", "Apr '27", "May '27", "Jun '27", "Jul '27", "Aug '27", "Sep '27", "Oct '27", "Nov '27", "Dec '27", "Jan '28", "Feb '28", "Mar '28", "Apr '28", "May '28", "Jun '28", "Jul '28", "Aug '28", "Sep '28", "Oct '28", "Nov '28", "Dec '28", "Jan '29", "Feb '29", "Mar '29", "Apr '29", "May '29", "Jun '29", "Jul '29", "Aug '29", "Sep '29", "Oct '29", "Nov '29", "Dec '29", "Jan '30", "Feb '30", "Mar '30", "Apr '30", "May '30", "Jun '30", "Jul '30", "Aug '30", "Sep '30", "Oct '30", "Nov '30", "Dec '30"];
 // Actual holdings on the extended (to 2030) axis: the recorded series, then empty months
@@ -2259,7 +2269,9 @@ const chartDefs = {
       {label:'Floor',data:plFloor,borderColor:'#60A5FA',borderWidth:1,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'},
       {label:'Ceiling',data:plCeil,borderColor:'#EF4444',borderWidth:1,borderDash:[3,3],fill:false,tension:0.3,pointRadius:0,yAxisID:'y'}
     ],
-    fmt: v => '$'+Math.round(v/1000)+'k',
+    fmt: v => v >= 1000000 ? '$'+parseFloat((v/1000000).toFixed(1))+'M' : '$'+Math.round(v/1000)+'k',
+    // Log scale: label only the 1-2-5 steps (20k, 50k, 100k, 200k, 500k, 1M), as Chart.js does by default
+    yScale: {type:'logarithmic', min:20000, max:1000000, tickFilter: v => { const m = v / Math.pow(10, Math.floor(Math.log10(v))); return [1,2,5].some(k => Math.abs(m - k) < 1e-9); }},
     legend:[{c:'#F7931A',d:false,l:'BTC price'},{c:'#22C55E',d:true,l:'Power law midpoint'},{c:'#60A5FA',d:true,l:'Floor'},{c:'#EF4444',d:true,l:'Ceiling'}]
   }
 };
@@ -2321,7 +2333,9 @@ function renderChart(type) {
       },
       scales:{
         x:{grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#827C76',font:{family:'JetBrains Mono',size:9},maxRotation:0}},
-        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#827C76',font:{family:'JetBrains Mono',size:9},callback:def.fmt}}
+        y:Object.assign({grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#827C76',font:{family:'JetBrains Mono',size:9},
+          autoSkip:!def.yScale, callback:v=>(!def.yScale || def.yScale.tickFilter(v)) ? def.fmt(v) : ''}},
+          def.yScale ? {type:def.yScale.type, min:def.yScale.min, max:def.yScale.max} : {})
       }
     }
   });
