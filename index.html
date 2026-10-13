@@ -603,21 +603,38 @@ section.full { max-width: none; padding: 0; }
 }
 .btn-secondary:hover, .btn-ghost:hover { border-color: var(--btc-line); color: var(--btc); }
 
-.hero-stats {
+/* Hero: text block left, tracking stats right; stacks below 900px */
+.hero-layout {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 380px);
+  grid-template-areas:
+    "main stats"
+    "foot stats";
+  column-gap: 3rem;
+  row-gap: 2.5rem;
+}
+.hero-main { grid-area: main; }
+.hero-layout .hero-ctas { margin-bottom: 0; }
+.hero-foot { grid-area: foot; }
+.hero-foot .hero-latest-callout { margin-top: 0; }
+.hero-stats {
+  grid-area: stats;
+  align-self: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  max-width: 900px;
 }
 
 .hero-stat {
   background: var(--surface);
-  padding: 28px 28px;
+  padding: 22px;
+  min-width: 0;
 }
+.hero-stat-wide { grid-column: 1 / -1; }
 .hero-stat-label {
   font-size: 10px;
   font-weight: 500;
@@ -628,7 +645,7 @@ section.full { max-width: none; padding: 0; }
 }
 .hero-stat-value {
   font-family: var(--font-mono);
-  font-size: 27px;
+  font-size: 24px;
   font-weight: 500;
   color: var(--text);
   line-height: 1;
@@ -1382,6 +1399,7 @@ section.full { max-width: none; padding: 0; }
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .hero-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "stats" "foot"; }
   .founder-section { grid-template-columns: 1fr; gap: 3rem; }
   .inflection-grid { grid-template-columns: 1fr; }
   .convergence-grid { grid-template-columns: 1fr; }
@@ -1484,8 +1502,8 @@ section.full { max-width: none; padding: 0; }
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-inner">
-    <div style="max-width:900px;">
-      <div>
+    <div class="hero-layout">
+      <div class="hero-main">
         <div class="hero-kicker">
           <span class="live-dot"></span>
           Live operation · Since January 2025 · Towards 2030
@@ -1508,28 +1526,35 @@ section.full { max-width: none; padding: 0; }
             Explore the operation
           </a>
         </div>
-        <div class="hero-stats" style="max-width:100%;">
-          <div class="hero-stat">
-            <div class="hero-stat-label">BTC held</div>
-            <div class="hero-stat-value btc" id="stat-btc">0.17710 ₿</div>
-            <div class="hero-stat-sub">since Jan 2025</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-label">Cost basis</div>
-            <div class="hero-stat-value" id="stat-basis">$80,181</div>
-            <div class="hero-stat-sub">avg per BTC</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-label">DCA signal</div>
-            <div class="hero-stat-value btc" id="stat-multiplier">–</div>
-            <div class="hero-stat-sub" id="stat-multiplier-sub">loading…</div>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-label">Cycle day</div>
-            <div class="hero-stat-value" id="stat-cycle">786</div>
-            <div class="hero-stat-sub">post Apr 2024 halving</div>
-          </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-label">BTC held</div>
+          <div class="hero-stat-value btc" id="stat-btc">0.17710 ₿</div>
+          <div class="hero-stat-sub">since Jan 2025</div>
         </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Cost basis</div>
+          <div class="hero-stat-value" id="stat-basis">$80,181</div>
+          <div class="hero-stat-sub">avg per BTC</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">DCA signal</div>
+          <div class="hero-stat-value btc" id="stat-multiplier">–</div>
+          <div class="hero-stat-sub" id="stat-multiplier-sub">loading…</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">Cycle day</div>
+          <div class="hero-stat-value" id="stat-cycle">786</div>
+          <div class="hero-stat-sub">post Apr 2024 halving</div>
+        </div>
+        <div class="hero-stat hero-stat-wide">
+          <div class="hero-stat-label">Days to halving</div>
+          <div class="hero-stat-value" id="stat-halving">–</div>
+          <div class="hero-stat-sub" id="stat-halving-sub">est. block 1,050,000</div>
+        </div>
+      </div>
+      <div class="hero-foot">
         <a href="#newsletter" class="hero-latest-callout">
           <span class="hero-latest-badge">LATEST</span>
           <span class="hero-latest-text">Issue 06: Strategy resumes buying as another treasury company is forced to sell — plus the debasement trade, Jackson Hole, and Trump's ultimatum to the Fed</span>
@@ -2511,11 +2536,59 @@ document.getElementById('stat-cycle').textContent=Math.round((TODAY-HALVING_DATE
   else { phase = "Pre-Halving Run-Up"; phaseNote = "Anticipation builds toward the next halving. No Cycle Phase multiplier active in this window."; }
   document.getElementById('signal-day').textContent = 'Day ' + dayCount;
   document.getElementById('signal-phase-desc').textContent = phase + ' phase. Month ' + Math.floor(monthCount) + ' of the 4th cycle. ' + phaseNote + ' The operation executes on the 15th of each month. Bitcoin trades 24/7, 365 days a year. That is a feature, not a footnote.';
-
-  const NEXT_HALVING = new Date('2028-04-20');
-  const monthsToHalving = Math.round((NEXT_HALVING-TODAY)/86400000/30.44);
-  document.getElementById('signal-halving-countdown').textContent = '5th halving, ~' + monthsToHalving + ' months away. This is the next structural inflection point. The operation will document every DCA purchase, every decision, and every outside influence between now and that date.';
 })();
+
+// --- Next halving (block 1,050,000): one source for the hero "Days to halving" tile and the
+// dashboard "Next key milestone" countdown, so the two never disagree. The halving happens at a
+// block height, so days come from the live tip height; the date is only a fallback estimate. ---
+const NEXT_HALVING_BLOCK = 1050000;
+const BLOCKS_PER_DAY = 144;
+const NEXT_HALVING_FALLBACK_DATE = new Date('2028-04-13'); // current block-time estimate
+const BLOCK_HEIGHT_SOURCES = [
+  'https://mempool.space/api/blocks/tip/height',
+  'https://blockstream.info/api/blocks/tip/height'
+];
+
+function renderNextHalving(days) {
+  document.getElementById('stat-halving').textContent = days.toLocaleString('en-US');
+  document.getElementById('stat-halving-sub').textContent = 'est. block ' + NEXT_HALVING_BLOCK.toLocaleString('en-US');
+  const monthsToHalving = Math.round(days / 30.44);
+  document.getElementById('signal-halving-countdown').textContent = '5th halving, ~' + monthsToHalving + ' months away. This is the next structural inflection point. The operation will document every DCA purchase, every decision, and every outside influence between now and that date.';
+}
+
+function fallbackHalvingDays() {
+  return Math.max(0, Math.floor((NEXT_HALVING_FALLBACK_DATE - new Date()) / 86400000));
+}
+
+// Plain-text tip height from one source; rejects on HTTP error, bad body or a 5s timeout
+async function fetchBlockHeight(url) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 5000);
+  try {
+    const res = await fetch(url, { signal: ctrl.signal });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const height = parseInt((await res.text()).trim(), 10);
+    if (!Number.isFinite(height) || height <= 0) throw new Error('bad height');
+    return height;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function updateNextHalving() {
+  for (const url of BLOCK_HEIGHT_SOURCES) {
+    try {
+      const height = await fetchBlockHeight(url);
+      renderNextHalving(Math.max(0, Math.floor((NEXT_HALVING_BLOCK - height) / BLOCKS_PER_DAY)));
+      return;
+    } catch (e) { /* try the next source */ }
+  }
+  renderNextHalving(fallbackHalvingDays());
+}
+
+renderNextHalving(fallbackHalvingDays());   // shown immediately, replaced once a live height loads
+updateNextHalving();
+setInterval(updateNextHalving, 10 * 60 * 1000);
 
 // Cycle Phase: Post-Peak Correction, confirmed active through April 2027 regardless of price
 const CYCLE_PHASE_END = new Date('2027-04-20');
