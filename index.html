@@ -1557,7 +1557,7 @@ section.full { max-width: none; padding: 0; }
     <li><a href="#newsletter">Newsletter</a></li>
     <li><a href="#charts" data-chart-tab="accumulation">Towards 2030</a></li>
     <li><a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="nav-cta-secondary">Get the manual</a></li>
-    <li><a href="javascript:void(0)" onclick="openSubModal()" class="nav-cta">Become a founding member</a></li>
+    <li><a href="javascript:void(0)" onclick="openSubModal()" class="nav-cta">Become a member</a></li>
   </ul>
 </nav>
 
@@ -1883,14 +1883,14 @@ section.full { max-width: none; padding: 0; }
   </div>
   <div class="sub-prompt fade-up" style="margin-top:0;margin-bottom:1.5rem;">
     <div class="sub-prompt-left">
-      <div class="sub-prompt-eyebrow">Founding members</div>
+      <div class="sub-prompt-eyebrow">Membership</div>
       <div class="sub-prompt-title">The full log is open. The Fortnightly goes further.</div>
-      <div class="sub-prompt-desc">Every entry and its complete reasoning is open to everyone, back to January 2025. Subscribers receive The Fortnightly — the newsletter analysis connecting each decision to the conditions around it, with early notification of upcoming decision points — delivered directly to their inbox, along with the operators manual. Founding members on the Foundation tier secure access through to December 2029 with a single one-off payment, limited to the first 200.</div>
+      <div class="sub-prompt-desc" id="membershipBlurb">Every entry and its complete reasoning is open to everyone, back to January 2025. Members receive The Fortnightly by email: the newsletter analysis connecting each decision to the conditions around it, with early notification of upcoming decision points. The operators manual comes with membership. Annual membership is $159 a year, limited to the first 50 members.</div>
     </div>
     <div class="sub-prompt-right">
       <button class="btn-primary" onclick="openSubModal()">
         <i class="ti ti-mail"></i>
-        Become a founding member
+        Become a member
       </button>
       <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-ghost">Get the manual free first</a>
     </div>
@@ -2060,12 +2060,12 @@ section.full { max-width: none; padding: 0; }
     <div class="sub-prompt-left">
       <div class="sub-prompt-eyebrow">Subscribe</div>
       <div class="sub-prompt-title">Every fortnight, directly to your inbox</div>
-      <div class="sub-prompt-desc">Subscribers receive the full newsletter with all four sections, early notification of upcoming decision points, and the operators manual. Founding members on the Foundation tier secure access through to December 2029 with a single one-off payment, limited to the first 200. It is a documented Bitcoin treasury operation delivered as a fortnightly read, growing with every issue. Straightforward, honest, and grounded in a decade of direct experience in the space.</div>
+      <div class="sub-prompt-desc">Subscribers receive the full newsletter with all four sections, early notification of upcoming decision points, and the operators manual. Members on the Foundation tier secure access through to December 2029 with a single one-off payment, limited to the first 200. It is a documented Bitcoin treasury operation delivered as a fortnightly read, growing with every issue. Straightforward, honest, and grounded in a decade of direct experience in the space.</div>
     </div>
     <div class="sub-prompt-right">
       <button class="btn-primary" onclick="openSubModal()">
         <i class="ti ti-mail"></i>
-        Become a founding member
+        Become a member
       </button>
       <a href="https://drive.google.com/file/d/1uwFy7WuwYARr_A9c7AHXK_QequgbCS-0/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-ghost">Get the manual free first</a>
     </div>
@@ -2526,6 +2526,9 @@ const PRICING_TIERS = [
 const PRICING_NOTE = 'Foundation is a one-off payment, limited to the first 200 subscribers, covering access through to December 2029. Annual and Monthly are ongoing subscriptions, cancel any time. All payments processed securely via Stripe.';
 const DWG_OFFER_BADGE = 'FIRST 50 ONLY';
 const DWG_OFFER_NOTE = 'Annual subscription, limited to the first 50 subscribers. Cancel any time. All payments processed securely via Stripe.';
+// Membership box under the decision log (#membershipBlurb), one version per mode
+const MEMBERSHIP_BLURB_OFFER = 'Every entry and its complete reasoning is open to everyone, back to January 2025. Members receive The Fortnightly by email: the newsletter analysis connecting each decision to the conditions around it, with early notification of upcoming decision points. The operators manual comes with membership. Annual membership is $159 a year, limited to the first 50 members.';
+const MEMBERSHIP_BLURB_TIERS = 'Every entry and its complete reasoning is open to everyone, back to January 2025. Members receive The Fortnightly by email: the newsletter analysis connecting each decision to the conditions around it, with early notification of upcoming decision points. The operators manual comes with membership. Choose monthly or annual membership, or a one-off Foundation payment that secures access through to December 2029, limited to the first 200.';
 
 // A tile with a badge gets the highlighted treatment (orange border and glow)
 function pricingTileHtml(t) {
@@ -2553,6 +2556,7 @@ function pricingTileHtml(t) {
     grid.style.margin = '0 auto 1.25rem';
   }
   document.getElementById('pricingNote').innerHTML = DWG_OFFER_MODE ? DWG_OFFER_NOTE : PRICING_NOTE;
+  document.getElementById('membershipBlurb').textContent = DWG_OFFER_MODE ? MEMBERSHIP_BLURB_OFFER : MEMBERSHIP_BLURB_TIERS;
 })();
 
 // Remember which control opened the subscription modal so focus can return to it.
