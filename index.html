@@ -240,6 +240,67 @@ body {
   color: var(--text2);
 }
 
+/* PAST ISSUES: free issues on Beehiiv, one self-contained link row per issue */
+.past-issues {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  margin-top: 1.5rem;
+}
+.past-issues-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--btc);
+  margin-bottom: 6px;
+}
+.past-issues-intro {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.past-issue {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "meta read" "title read";
+  column-gap: 1.25rem;
+  row-gap: 4px;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.past-issue + .past-issue { margin-top: 8px; }
+.past-issue:hover, .past-issue:focus-visible { border-color: var(--btc-line); }
+.past-issue-meta {
+  grid-area: meta;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--btc);
+}
+.past-issue-date { color: var(--text3); }
+.past-issue-title {
+  grid-area: title;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.45;
+}
+.past-issue-read {
+  grid-area: read;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--btc);
+  white-space: nowrap;
+}
+
 /* PHASE TIMELINE */
 .phase-timeline {
   display: flex;
@@ -925,7 +986,7 @@ section.full { max-width: none; padding: 0; }
   border: 1px dashed var(--border2);
   border-radius: var(--radius);
 }
-#charts, #cycle-phase, #pathway { scroll-margin-top: 80px; }
+#charts, #cycle-phase, #pathway, #past-issues { scroll-margin-top: 80px; }
 
 .chart-legend {
   display: flex;
@@ -1453,6 +1514,9 @@ section.full { max-width: none; padding: 0; }
   .newsletter-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
+  .past-issues { padding: 1.25rem; }
+  .past-issue { padding: 12px 14px; column-gap: 0.75rem; grid-template-areas: "meta meta" "title read"; }
+  .past-issue-read { align-self: end; }
   .newsletter-card { padding: 1.5rem 1.25rem; }
   .hero-stat { padding: 20px 16px; }
   .hero-stat-value { font-size: clamp(18px, 5.5vw, 27px); }
@@ -1975,6 +2039,23 @@ section.full { max-width: none; padding: 0; }
     </div>
   </div>
 
+  <!-- PAST ISSUES: newest first. To add an issue, copy one <a class="past-issue"> block to the top
+       of the list and edit its URL, number, date and title (and the intro line if it lists issues). -->
+  <div class="past-issues fade-up" id="past-issues">
+    <div class="past-issues-label">Past issues</div>
+    <p class="past-issues-intro">Issues 01 and 02 are free to read. Subscribers receive every new issue by email.</p>
+    <a class="past-issue" href="https://mybitcointreasury.beehiiv.com/p/the-fortnightly-249383216b41c001" target="_blank" rel="noopener">
+      <span class="past-issue-meta">Issue 02 · <span class="past-issue-date">Week ending 11 July 2026</span></span>
+      <span class="past-issue-title">Recovery from $58,559, Strategy sells again, and Satsuma faces a liquidation vote</span>
+      <span class="past-issue-read">Read →</span>
+    </a>
+    <a class="past-issue" href="https://mybitcointreasury.beehiiv.com/p/the-fortnightly-2d073dfe73fdf93f" target="_blank" rel="noopener">
+      <span class="past-issue-meta">Issue 01 · <span class="past-issue-date">Week ending 27 June 2026</span></span>
+      <span class="past-issue-title">The first 2.8x buy as price nears the power law floor</span>
+      <span class="past-issue-read">Read →</span>
+    </a>
+  </div>
+
   <div class="sub-prompt fade-up" style="margin-top:1.5rem;">
     <div class="sub-prompt-left">
       <div class="sub-prompt-eyebrow">Subscribe</div>
@@ -2091,6 +2172,7 @@ section.full { max-width: none; padding: 0; }
         <a href="#dashboard">Dashboard</a>
         <a href="#log">Decision log</a>
         <a href="#newsletter">Newsletter</a>
+        <a href="#past-issues">Past issues</a>
         <a href="#charts" data-chart-tab="accumulation">Towards 2030</a>
       </div>
       <div class="footer-col">
