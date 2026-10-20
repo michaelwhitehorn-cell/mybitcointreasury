@@ -8,7 +8,7 @@ Static single-page site for www.mybitcointreasury.finance. Everything lives in `
 - **The decision log is fully open** to all visitors by design, including every entry's reasoning. Subscribers get The Fortnightly newsletter, the operators manual and founding member status (Foundation tier). Never describe the log or its reasoning as locked or subscriber-only.
 - **The operators manual** is a free, ungated Google Drive download for now. Email capture is planned later. Every "manual" link points straight at the Drive file.
 - **Floor values** quoted anywhere (log entries, notes) come from the site's power-law formula, `calculatePowerLawFloor(new Date(year, monthIndex, 15))`, rounded to the dollar. Never use manually sourced floor figures.
-- **Execution price** is the open/low midpoint of the execution day. (Backtest entries before Jun 2026 use representative mid-month prices, as the log intro states.)
+- **Execution price** is the midpoint of the execution day's low and high. (Backtest entries before Jun 2026 use representative mid-month prices, as the log intro states.)
 - **Timeline:** the operation began January 2025; live public documentation began June 2026. Don't conflate the two.
 - **Copy rule:** never use double hyphens in visible copy. Use an em dash (`—` inside JS strings, `—` in HTML) or rephrase.
 
@@ -36,7 +36,7 @@ Not derived: `projectionLow` / `projectionHigh` (the shaded 2030 range) are publ
 
 ## Monthly update procedure
 
-1. **Append one object to the end of `LOG_ENTRIES`** with every field above. `live: true`; `usd` = fiat deployed; `btc` = BTC acquired to 6 dp; `price` = open/low midpoint in `$NN.Nk` form. If the reasoning quotes a floor, take it from the formula for the 15th of that month: add the entry, open the page and run `Math.round(calculatePowerLawFloor(new Date(2025, LOG_ENTRIES.length - 1, 15)))` in the browser console.
+1. **Append one object to the end of `LOG_ENTRIES`** with every field above. `live: true`; `usd` = fiat deployed; `btc` = BTC acquired to 6 dp; `price` = low/high midpoint of the execution day in `$NN.Nk` form. If the reasoning quotes a floor, take it from the formula for the 15th of that month: add the entry, open the page and run `Math.round(calculatePowerLawFloor(new Date(2025, LOG_ENTRIES.length - 1, 15)))` in the browser console.
 2. Nothing else needs editing for the numbers: every series, including the power-law floor, midpoint and ceiling, extends itself. Optionally refresh copy that names the latest execution: the dashboard note under the signal cards, and the hero "latest issue" callout and newsletter preview when a new issue goes out.
 3. Verify in a browser (see below): the log count goes up by one, the new row is highlighted live, every chart shows the new month, and the hero/KPI figures match the new totals.
 
