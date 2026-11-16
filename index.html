@@ -937,6 +937,11 @@ section.full { max-width: none; padding: 0; }
   color: var(--text3);
   margin-top: 3px;
 }
+/* Context tiles: a second KPI row joined under the first. Display only. */
+.kpi-row.kpi-row-context { grid-template-columns: repeat(2, 1fr); border-radius: 0; border-top: none; }
+.kpi-row-context .kpi-sub { line-height: 1.5; }
+.kpi-row-context .kpi-context-note { margin-top: 6px; }
+.data-notes { margin-top: 10px; font-size: 11px; color: var(--text3); line-height: 1.6; }
 
 .chart-panel {
   background: var(--surface);
@@ -1540,6 +1545,12 @@ section.full { max-width: none; padding: 0; }
 @media (max-width: 400px) {
   .footer-copy { white-space: normal; }
 }
+@media (max-width: 900px) {
+  .kpi-row.kpi-row-context > .kpi:last-child { grid-column: auto; }
+}
+@media (max-width: 640px) {
+  .kpi-row.kpi-row-context { grid-template-columns: 1fr !important; }
+}
 </style>
 </head>
 <body>
@@ -1821,6 +1832,20 @@ section.full { max-width: none; padding: 0; }
     </div>
   </div>
 
+  <div class="kpi-row kpi-row-context fade-up">
+    <div class="kpi">
+      <div class="kpi-label">200-week average</div>
+      <div class="kpi-value" id="kpi-sma200">loading…</div>
+      <div class="kpi-sub" id="kpi-sma200-sub">–</div>
+      <div class="kpi-sub kpi-context-note">Shown for context. It does not change the DCA multiplier.</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Days below the floor</div>
+      <div class="kpi-value" id="kpi-below-floor">loading…</div>
+      <div class="kpi-sub" id="kpi-below-floor-sub">–</div>
+    </div>
+  </div>
+
   <div class="chart-panel fade-up" id="charts">
     <div class="chart-tabs">
       <button class="chart-tab active" data-chart="accumulation" onclick="switchChart('accumulation',this)">BTC accumulation</button>
@@ -1839,6 +1864,7 @@ section.full { max-width: none; padding: 0; }
     <div id="chart-tab-caption" style="margin-top:6px;font-size:11px;color:var(--text3);line-height:1.6;">Real BTC held over time, plus a shaded projected range through 2030 — derived from the DCA framework's own rules and the power law corridor shown on the Power Law tab, not a single price forecast. Illustrative only, not revised once published.</div>
     <div style="margin-top:10px;font-size:11px;color:var(--text3);">Live power law reference: <a href="https://www.mnav.com/charts/bitcoin-power-law" target="_blank" rel="noopener noreferrer" style="color:var(--btc);text-decoration:none;">mNAV · Bitcoin power law chart</a></div>
   </div>
+  <div class="data-notes" id="data-notes">Data notes · <span id="note-price">Price loading…</span> · <span id="note-formula">Floor, midpoint and ceiling: calculated from the site formula</span> · <span id="note-daily">Daily closes loading…</span></div>
 
   <div class="signal-row fade-up" id="cycle-phase">
     <div class="signal-card">
@@ -2698,17 +2724,136 @@ function formatUsd(v) { return '$' + Math.round(v).toLocaleString('en-US'); }
   document.getElementById('stat-basis').textContent = formatUsd(avgCost);
   document.getElementById('kpi-basis').textContent = formatUsd(avgCost);
 })();
+// --- Context tiles and data notes (display only) ---
+// Nothing here feeds the DCA multiplier, the floor zone or the signal card. The 200-week
+// average and days-below-floor come from data/btc-daily.json (scripts/update-btc-data.mjs).
+const SMA_200W_DAYS = 1400;            // 200 weeks of daily closes
+const BELOW_FLOOR_FROM = '2013-01-01'; // window start for the days-below-floor count
+const DATA_STALE_DAYS = 10;
+let btcDaily = null;     // { updated, source, sma, smaAsOf, below } once loaded
+let livePrice = null;    // latest CoinGecko price; null when the latest fetch failed
+let livePriceAt = null;  // CoinGecko's last-updated time, or the fetch time
+
+function formatUtcDate(d) {
+  return d.getUTCDate() + ' ' + MONTH_ABBR[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+}
+function formatUtcDateTime(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return formatUtcDate(d) + ' ' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()) + ' UTC';
+}
+
+// Days with a close under the site's own floor for that date, from `fromDay` to the last day
+function belowFloorStats(data, fromDay) {
+  let days = 0, below = 0, run = 0, longest = 0;
+  for (const r of data) {
+    if (r.date < fromDay) continue;
+    days++;
+    if (r.close < calculatePowerLawFloor(new Date(r.date))) {
+      below++; run++; longest = Math.max(longest, run);
+    } else {
+      run = 0;
+    }
+  }
+  return { days, below, longest, current: run };
+}
+
+function renderContext() {
+  const smaEl = document.getElementById('kpi-sma200');
+  const smaSubEl = document.getElementById('kpi-sma200-sub');
+  const bfEl = document.getElementById('kpi-below-floor');
+  const bfSubEl = document.getElementById('kpi-below-floor-sub');
+
+  document.getElementById('note-price').textContent = livePrice !== null
+    ? 'Price: CoinGecko, ' + formatUtcDateTime(livePriceAt)
+    : 'Price unavailable';
+  document.getElementById('note-formula').textContent =
+    'Floor, midpoint and ceiling: calculated from the site formula, as of ' + formatUtcDate(new Date());
+
+  if (!btcDaily) return;
+  if (btcDaily.error) {
+    smaEl.textContent = 'unavailable';
+    smaSubEl.textContent = '–';
+    bfEl.textContent = 'unavailable';
+    bfSubEl.textContent = '–';
+    document.getElementById('note-daily').textContent = 'Daily closes unavailable';
+    return;
+  }
+
+  const asOf = formatUtcDate(new Date(btcDaily.smaAsOf));
+  smaEl.textContent = formatUsd(btcDaily.sma);
+  let smaText = '200-week average: ' + formatUsd(btcDaily.sma) + ' (as of ' + asOf + ').';
+  if (livePrice !== null) {
+    const pct = (livePrice / btcDaily.sma - 1) * 100;
+    smaText += ' Price is ' + Math.abs(pct).toFixed(1) + '% ' + (pct < 0 ? 'below' : 'above') + ' it.';
+  }
+  smaSubEl.textContent = smaText;
+
+  const b = btcDaily.below;
+  const share = (b.below / b.days * 100).toFixed(1);
+  bfEl.textContent = b.below.toLocaleString('en-US') + ' days';
+  bfSubEl.textContent = 'Days below the floor since 2013: ' + b.below.toLocaleString('en-US') + ' of ' +
+    b.days.toLocaleString('en-US') + ' (' + share + '%). Longest run: ' + b.longest + ' days. Current run: ' +
+    b.current + ' days (as of ' + asOf + ').';
+
+  // Credit, licence link and note of changes, as the data file's licence asks
+  const updated = new Date(btcDaily.updated);
+  const stale = Date.now() - updated.getTime() > DATA_STALE_DAYS * 86400000;
+  const noteEl = document.getElementById('note-daily');
+  noteEl.textContent = '200-week average and days below the floor: from daily closes, source ' + btcDaily.source;
+  if (btcDaily.license && /^https:\/\//.test(btcDaily.licenseUrl || '')) {
+    const link = document.createElement('a');
+    link.href = btcDaily.licenseUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.cssText = 'color:var(--btc);text-decoration:none;';
+    link.textContent = btcDaily.license;
+    noteEl.append(', licensed ', link);
+  }
+  noteEl.append((btcDaily.modified ? ', ' + btcDaily.modified : '') +
+    ', last updated ' + formatUtcDate(updated) + (stale ? ' (data not recently refreshed)' : ''));
+}
+
+async function loadBtcDaily() {
+  try {
+    const res = await fetch('data/btc-daily.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const data = json.data;
+    if (!Array.isArray(data) || data.length < SMA_200W_DAYS) throw new Error('not enough daily closes');
+    const last = data.slice(-SMA_200W_DAYS);
+    btcDaily = {
+      updated: json.updated,
+      source: json.source,
+      license: json.license,
+      licenseUrl: json.license_url,
+      modified: json.modified,
+      sma: last.reduce((sum, r) => sum + r.close, 0) / SMA_200W_DAYS,
+      smaAsOf: data[data.length - 1].date,
+      below: belowFloorStats(data, BELOW_FLOOR_FROM),
+    };
+  } catch (e) {
+    btcDaily = { error: true };
+    console.warn('Daily close data unavailable:', e);
+  }
+  renderContext();
+}
+
+loadBtcDaily();
+
 const COINGECKO_API_KEY = ''; // paste a free CoinGecko Demo API key here once obtained
 
 async function updateLiveDashboardStats() {
   try {
     const hasKey = COINGECKO_API_KEY && COINGECKO_API_KEY.length > 0;
-    const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'
+    const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_last_updated_at=true'
       + (hasKey ? '&x_cg_demo_api_key=' + COINGECKO_API_KEY : '');
     const res = await fetch(url);
     if (!res.ok) throw new Error('price fetch failed: HTTP ' + res.status);
     const data = await res.json();
     const price = data.bitcoin.usd;
+    livePrice = price;
+    livePriceAt = data.bitcoin.last_updated_at ? new Date(data.bitcoin.last_updated_at * 1000) : new Date();
+    renderContext();
 
     // Fill in the live "Now" point on the shared price array, and refresh
     // whichever chart is currently on screen if it uses that data
@@ -2785,6 +2930,8 @@ async function updateLiveDashboardStats() {
     }
     multDescEl.textContent = descText;
   } catch (e) {
+    livePrice = null;
+    renderContext();
     document.getElementById('live-price-tag').textContent = 'BTC price unavailable';
     document.getElementById('kpi-current-value').textContent = 'unavailable';
     document.getElementById('kpi-pnl').textContent = '\u2013';
