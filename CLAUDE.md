@@ -49,7 +49,7 @@ Refresh it by hand from the repository root (Node 18+), then commit the file:
 - `node scripts/update-btc-data.mjs` fetches new days from the Coin Metrics Community API.
 - `node scripts/update-btc-data.mjs --csv FILE` imports a local CSV with a `date,close` header (`YYYY-MM-DD`, USD).
 
-The script only appends days after the last one in the file, skips today's unfinished day, and refuses to write if the series would have a gap, a duplicate or a non-numeric close. The page flags the data as "not recently refreshed" once `updated` is more than 10 days old. There is no scheduled refresh.
+The script only appends days after the last one in the file, skips today's unfinished day, and refuses to write if the series would have a gap, a duplicate or a non-numeric close. The page flags the data as "not recently refreshed" once `updated` is more than 16 days old. There is no scheduled refresh.
 
 ## Verifying changes
 
