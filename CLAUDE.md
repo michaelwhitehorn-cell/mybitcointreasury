@@ -1,6 +1,6 @@
 # mybitcointreasury
 
-Static single-page site for www.mybitcointreasury.finance. Everything lives in `index.html` (inline CSS and JS, Chart.js and Tabler Icons from CDNs). There is no build step, no package.json and no test suite. Other files: `robots.txt`, `sitemap.xml`, favicon/touch icons, `og-share-image.png` and `founder-mining.png`.
+Static single-page site for www.mybitcointreasury.finance. Everything lives in `index.html` (inline CSS and JS, Chart.js and Tabler Icons from CDNs). There is no build step, no package.json and no test suite. Other files: `robots.txt`, `sitemap.xml`, favicon/touch icons, `og-share-image.png`, `founder-mining.png`, `data/btc-daily.json` (daily BTC closes) and `scripts/update-btc-data.mjs` (refreshes that file).
 
 ## Standing decisions (do not re-flag)
 
@@ -40,9 +40,20 @@ Not derived: `projectionLow` / `projectionHigh` (the shaded 2030 range) are publ
 2. Nothing else needs editing for the numbers: every series, including the power-law floor, midpoint and ceiling, extends itself. Optionally refresh copy that names the latest execution: the dashboard note under the signal cards, and the hero "latest issue" callout and newsletter preview when a new issue goes out.
 3. Verify in a browser (see below): the log count goes up by one, the new row is highlighted live, every chart shows the new month, and the hero/KPI figures match the new totals.
 
+## Daily price data
+
+`data/btc-daily.json` holds BTC/USD daily closes (UTC), oldest first, with top-level `updated` and `source`. The page reads it for two display-only dashboard tiles (200-week average, days below the floor) and the data notes line. Neither tile feeds the DCA multiplier or the signal.
+
+Refresh it by hand from the repository root (Node 18+), then commit the file:
+
+- `node scripts/update-btc-data.mjs` fetches new days from the Coin Metrics Community API.
+- `node scripts/update-btc-data.mjs --csv FILE` imports a local CSV with a `date,close` header (`YYYY-MM-DD`, USD).
+
+The script only appends days after the last one in the file, skips today's unfinished day, and refuses to write if the series would have a gap, a duplicate or a non-numeric close. The page flags the data as "not recently refreshed" once `updated` is more than 10 days old. There is no scheduled refresh.
+
 ## Verifying changes
 
-- Serve or open `index.html` directly. Check at 390px and 1280px, and keep the console free of errors on load, when opening the pricing modal, when switching chart tabs and when expanding log entries.
+- Serve `index.html` over HTTP (for example `python3 -m http.server`); opened directly from disk, the daily-data tiles show "unavailable" because the browser blocks the data file fetch. Check at 390px and 1280px, and keep the console free of errors on load, when opening the pricing modal, when switching chart tabs and when expanding log entries.
 - The page must still render if a CDN fails: chart creation is guarded and shows "Chart unavailable".
 - Mobile layout overrides live in the `PHONE LAYOUT` media queries at the end of the stylesheet. Check there is no horizontal overflow at 360px.
 
