@@ -2729,7 +2729,7 @@ function formatUsd(v) { return '$' + Math.round(v).toLocaleString('en-US'); }
 // average and days-below-floor come from data/btc-daily.json (scripts/update-btc-data.mjs).
 const SMA_200W_DAYS = 1400;            // 200 weeks of daily closes
 const BELOW_FLOOR_FROM = '2013-01-01'; // window start for the days-below-floor count
-const DATA_STALE_DAYS = 10;
+const DATA_STALE_DAYS = 16;            // Refresh with each fortnightly issue; 16 days leaves a two-day buffer.
 let btcDaily = null;     // { updated, source, sma, smaAsOf, below } once loaded
 let livePrice = null;    // latest CoinGecko price; null when the latest fetch failed
 let livePriceAt = null;  // CoinGecko's last-updated time, or the fetch time
