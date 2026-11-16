@@ -2795,11 +2795,22 @@ function renderContext() {
     b.days.toLocaleString('en-US') + ' (' + share + '%). Longest run: ' + b.longest + ' days. Current run: ' +
     b.current + ' days (as of ' + asOf + ').';
 
+  // Credit, licence link and note of changes, as the data file's licence asks
   const updated = new Date(btcDaily.updated);
   const stale = Date.now() - updated.getTime() > DATA_STALE_DAYS * 86400000;
-  document.getElementById('note-daily').textContent =
-    '200-week average and days below the floor: from daily closes, source ' + btcDaily.source +
-    ', last updated ' + formatUtcDate(updated) + (stale ? ' (data not recently refreshed)' : '');
+  const noteEl = document.getElementById('note-daily');
+  noteEl.textContent = '200-week average and days below the floor: from daily closes, source ' + btcDaily.source;
+  if (btcDaily.license && /^https:\/\//.test(btcDaily.licenseUrl || '')) {
+    const link = document.createElement('a');
+    link.href = btcDaily.licenseUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.cssText = 'color:var(--btc);text-decoration:none;';
+    link.textContent = btcDaily.license;
+    noteEl.append(', licensed ', link);
+  }
+  noteEl.append((btcDaily.modified ? ', ' + btcDaily.modified : '') +
+    ', last updated ' + formatUtcDate(updated) + (stale ? ' (data not recently refreshed)' : ''));
 }
 
 async function loadBtcDaily() {
@@ -2813,6 +2824,9 @@ async function loadBtcDaily() {
     btcDaily = {
       updated: json.updated,
       source: json.source,
+      license: json.license,
+      licenseUrl: json.license_url,
+      modified: json.modified,
       sma: last.reduce((sum, r) => sum + r.close, 0) / SMA_200W_DAYS,
       smaAsOf: data[data.length - 1].date,
       below: belowFloorStats(data, BELOW_FLOOR_FROM),

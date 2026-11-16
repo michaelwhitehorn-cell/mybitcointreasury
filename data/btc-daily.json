@@ -1,4 +1,4 @@
-{"updated":"2026-11-16T05:47:38.647Z","source":"Coin Metrics Community API (BTC PriceUSD, daily)","data":[{"date":"2010-07-18","close":0.09},
+{"updated":"2026-11-16T05:47:38.647Z","source":"Coin Metrics Community API (BTC PriceUSD, daily)","license":"CC BY-NC 4.0","license_url":"https://creativecommons.org/licenses/by-nc/4.0/","modified":"closes rounded to the cent","data":[{"date":"2010-07-18","close":0.09},
 {"date":"2010-07-19","close":0.08},
 {"date":"2010-07-20","close":0.07},
 {"date":"2010-07-21","close":0.08},

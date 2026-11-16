@@ -12,6 +12,8 @@
 // never rewrites existing rows, and leaves the file untouched when there is nothing new.
 // It refuses to write if the merged series has a gap, a duplicate or a non-numeric close.
 // Today's (unfinished) UTC day is never written.
+// Closes are stored to the cent, or to 6 significant figures below $1 so early prices keep
+// their precision. Rows already in the file keep whatever precision they were written with.
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -22,6 +24,11 @@ const OUT = resolve(ROOT, 'data/btc-daily.json');
 const START = '2010-07-18';
 const API = 'https://community-api.coinmetrics.io/v4/timeseries/asset-metrics';
 const API_SOURCE = 'Coin Metrics Community API (BTC PriceUSD, daily)';
+// Coin Metrics links its Community data to CC BY-NC 4.0, which asks for credit, a licence
+// link and a note of any changes; the page shows these fields in its data notes line.
+const API_LICENSE = 'CC BY-NC 4.0';
+const API_LICENSE_URL = 'https://creativecommons.org/licenses/by-nc/4.0/';
+const API_MODIFIED = 'closes rounded to the cent, or to 6 significant figures under $1';
 const DAY = 86400000;
 
 const fail = msg => { console.error('update-btc-data: ' + msg); process.exit(1); };
@@ -102,13 +109,19 @@ if (!fresh.length) {
   process.exit(0);
 }
 
-const data = have.concat(fresh.map(r => ({ date: r.date, close: Math.round(r.close * 100) / 100 })));
+const roundClose = c => (c >= 1 ? Math.round(c * 100) / 100 : Number(c.toPrecision(6)));
+const data = have.concat(fresh.map(r => ({ date: r.date, close: roundClose(r.close) })));
 if (!lastDay && data[0].date !== START && !csvPath) fail('API series starts on ' + data[0].date + ', expected ' + START);
 validate(data);
 
+// A CSV import keeps the file's existing source and licence fields; an API run sets them.
+const keep = (field, fallback) => (existing && existing[field]) || fallback;
 const out = {
   updated: new Date().toISOString(),
-  source: csvPath ? (existing && existing.source) || 'Local CSV import' : API_SOURCE,
+  source: csvPath ? keep('source', 'Local CSV import') : API_SOURCE,
+  license: csvPath ? keep('license', undefined) : API_LICENSE,
+  license_url: csvPath ? keep('license_url', undefined) : API_LICENSE_URL,
+  modified: keep('modified', csvPath ? undefined : API_MODIFIED),
   data,
 };
 await mkdir(dirname(OUT), { recursive: true });
